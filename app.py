@@ -11,47 +11,7 @@ st.title("🎮 MLBB Draft Coach")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
 # ---------------------------------------------------------
-# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ (รวมข้อมูล Lapu-Lapu แล้ว)
-# ---------------------------------------------------------
-raw_data = """
-Beatrix เบียร์ทริก ตัวดราฟแก้ทาง
-Khufra คูฟรา 5.4 บทบาท: Tank | เลน: Roam Counters: Beatrix
-Marcel มาเซลล์ 4.4 บทบาท: Support | เลน: Roam Counters: Beatrix
-Granger เกรนเจอร์ 3.8 บทบาท: Marksman | เลน: Gold Lane Counters: Beatrix
-Joy จอย 3.7 บทบาท: Assassin | เลน: Jungle Counters: Beatrix
-Wanwan หวานหว่าน 2.9 บทบาท: Marksman | เลน: Gold Lane Counters: Beatrix
-Obsidia ฮอปซิเดีย 2.1 บทบาท: Marksman | เลน: Gold Lane Counters: Beatrix
-Moskov มอสโคฟ 1.0 บทบาท: Marksman | เลน: Gold Lane Counters: Beatrix
-Irithel ไอริเทล 0.6 บทบาท: Marksman | เลน: Gold Lane Counters: Beatrix
-
-Brody โบร์ดี้ ตัวดราฟแก้ทาง
-Barats บารัต 5.6 บทบาท: Tank, Fighter | เลน: Jungle Counters: Brody
-Sun ซัน 4.6 บทบาท: Fighter | เลน: Exp Lane, Jungle Counters: Brody
-Khufra คูฟรา 3.7 บทบาท: Tankทำการอัพเดตข้อมูล `raw_data`, `hero_abilities` ชุดใหม่ล่าสุด และปรับปรุงตรรกะการอ่านข้อมูล (Parsing Logics) เรียบร้อยแล้วครับ โค้ดฉบับสมบูรณ์ด้านล่างนี้พร้อมให้นำไปวางทับไฟล์ `app.py` เดิมบน GitHub ได้ทันทีครับ
-
-**จุดที่ทำการอัพเดต:**
-1.  **ตรรกะการ Parsing ใหม่:** แก้ไขปัญหาการอ่านชื่อฮีโร่ภาษาไทยที่มีเครื่องหมายพิเศษ เช่น **"ลาปู-ลาปู"** ให้ระบบสามารถรับรู้ข้อมูลได้ถูกต้อง ไม่ข้ามข้อมูลไปเหมือนเวอร์ชันก่อน
-2.  **ข้อมูลล่าสุด:** รวมชุดข้อมูลฮีโร่แก้ทางและคำอธิบายความสามารถชุดใหม่ล่าสุดที่คุณส่งมาเรียบร้อยแล้ว
-
----
-
-### โค้ดฉบับเต็มสำหรับไฟล์ `app.py`
-
-```python
-import streamlit as st
-import re
-import difflib
-
-# ---------------------------------------------------------
-# 1. ตั้งค่าหน้าตาของแอปพลิเคชัน
-# ---------------------------------------------------------
-st.set_page_config(page_title="MLBB Draft Coach", page_icon="🎮", layout="centered")
-
-st.title("🎮 MLBB Draft Coach")
-st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang (อัพเดตข้อมูลล่าสุด)")
-
-# ---------------------------------------------------------
-# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ (UPDATE ชุดใหม่ล่าสุด)
+# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ (ฉบับสมบูรณ์ 100%)
 # ---------------------------------------------------------
 raw_data = """
 Beatrix เบียร์ทริก ตัวดราฟแก้ทาง
@@ -984,6 +944,7 @@ Mathilda มาธิลดา 0.2 บทบาท: Support, Assassin | เล�
 Cyclops ไซคลอปส์ 0.2 บทบาท: Mage | เลน: Mid Lane Counters: Yi Sun-shin
 """
 
+# พจนานุกรมสรุปความสามารถของฮีโร่ทุกตัว (ครบถ้วนทุกตัว)
 hero_abilities = {
     "Minsitthar": "มีความสามารถในการดึง ล็อคเป้าหมาย และยกเลิกสกิลพุ่งตัวของฮีโร่สายไฟต์เตอร์/แอสซาซิน",
     "Faramis": "มีความสามารถในการสร้างโล่ชุบชีวิตเพื่อนร่วมทีมและทำดาเมจวงกว้าง",
@@ -1096,7 +1057,7 @@ hero_abilities = {
 }
 
 # ---------------------------------------------------------
-# 3. ฟังก์ชันคำนวณ (UPDATE: ตรรกะ Parsing รองรับชื่อที่มีขีด)
+# 3. ฟังก์ชันคำนวณ (Robust Parsing Logic)
 # ---------------------------------------------------------
 @st.cache_data
 def parse_database(data_string):
@@ -1106,77 +1067,55 @@ def parse_database(data_string):
     
     for line in data_string.strip().split('\n'):
         line = line.strip()
-        if not line: continue
+        if not line: 
+            continue
             
         if "ตัวดราฟแก้ทาง" in line:
             name_part = line.replace("ตัวดราฟแก้ทาง", "").strip()
-            
-            # ตรรกะ Parsing ใหม่: แยกชื่อภาษาอังกฤษออกจากภาษาไทย
-            # รองรับชื่อภาษาไทยที่มีขีดกลาง (-) และเว้นวรรค
-            eng_part = ""
-            th_part = ""
-            
-            # ใช้ Regex เพื่อค้นหาจุดสิ้นสุดของชื่อภาษาอังกฤษ
-            # (อนุมานว่าชื่ออังกฤษจบก่อนอักษรไทยตัวแรก)
-            match_start_thai = re.search(r'[ก-๙]', name_part)
-            
-            if match_start_thai:
-                end_eng_idx = match_start_thai.start()
-                eng_part = name_part[:end_eng_idx].strip()
-                th_part = name_part[end_eng_idx:].strip()
+            # ใช้ Regex ค้นหาอักษรไทยตัวแรกเพื่อแยกชื่อภาษาอังกฤษออกจากภาษาไทย
+            match_thai = re.search(r'[ก-๙]', name_part)
+            if match_thai:
+                idx = match_thai.start()
+                eng_name = name_part[:idx].strip()
+                th_name = name_part[idx:].strip()
             else:
-                eng_part = name_part
-                th_part = name_part
-            
-            # เก็บบันทึกข้อมูล
-            current_target = eng_part.lower()
-            current_target_th = th_part
+                eng_name = name_part.strip()
+                th_name = name_part.strip()
                 
-            thai_to_eng[current_target_th] = current_target
+            current_target = eng_name.lower()
+            thai_to_eng[th_name] = current_target
             db[current_target] = []
             
         elif "Counters:" in line:
             try:
-                # แยกคะแนน
-                score_match = re.search(r'([\d.]+)', line)
-                if not score_match: continue
-                score = float(score_match.group(1))
+                part1, part2 = line.split(" บทบาท: ")
+                tokens = part1.split()
+                score = float(tokens[-1])
                 
-                # แยกชื่อแก้ทาง
-                start_counters_idx = line.find("Counters:")
-                after_counters = line[start_counters_idx + 9:].strip()
-                
-                # แยกบทบาทและเลน
-                role_match = re.search(r'บทบาท:\s*(.*?)\s*\|', line)
-                role = role_match.group(1) if role_match else ""
-                
-                lane_match = re.search(r'เลน:\s*(.*?)\s*Counters:', line)
-                lane = lane_match.group(1) if lane_match else ""
-                
-                # ค้นหาชื่อแก้ทาง (ภาษาอังกฤษและไทย)
-                name_info = line[:score_match.start()].strip()
-                # แยกแก้ทางอังกฤษออกจากแก้ทางไทย
-                c_eng_part = ""
-                c_th_part = ""
-                
-                c_match_start_thai = re.search(r'[ก-๙]', name_info)
-                if c_match_start_thai:
-                    c_end_eng_idx = c_match_start_thai.start()
-                    c_eng_part = name_info[:c_end_eng_idx].strip()
-                    c_th_part = name_info[c_end_eng_idx:].strip()
+                # แยกชื่อภาษาไทยและภาษาอังกฤษของฮีโร่แก้ทาง
+                match_thai = re.search(r'[ก-๙]', part1)
+                if match_thai:
+                    idx = match_thai.start()
+                    c_eng_name = part1[:idx].strip()
+                    c_th_name = part1[idx:part1.rfind(tokens[-1])].strip()
                 else:
-                    c_eng_part = name_info
-                    c_th_part = name_info
+                    c_eng_name = " ".join(tokens[:-1])
+                    c_th_name = " ".join(tokens[:-1])
                 
-                db[current_target].append({
-                    "name": c_eng_part,
-                    "th_name": c_th_part,
-                    "score": score,
-                    "role": role,
-                    "lane": lane
-                })
-            except Exception as e:
-                # พิมพ์ข้อผิดพลาดเพื่อดีบักหากจำเป็น (บน Streamlit จะไม่เห็น)
+                role_part, rest = part2.split(" | เลน: ")
+                lane_part, target_part = rest.split(" Counters: ")
+                
+                thai_to_eng[c_th_name.strip()] = c_eng_name.strip().lower()
+                
+                if current_target in db:
+                    db[current_target].append({
+                        "name": c_eng_name.strip(),
+                        "th_name": c_th_name.strip(),
+                        "score": score,
+                        "role": role_part.strip(),
+                        "lane": lane_part.strip()
+                    })
+            except Exception:
                 continue
                 
     return db, thai_to_eng
@@ -1231,29 +1170,24 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
     return final_picks, messages
 
 # ---------------------------------------------------------
-# 4. ส่วนหน้าตาแอป (User Interface)
+# 4. ส่วนหน้าตาแอปพลิเคชัน (Streamlit UI)
 # ---------------------------------------------------------
-# เรียกใช้ฟังก์ชัน Parsing
 db, thai_to_eng = parse_database(raw_data)
 
-# ช่องรับข้อมูล input บนหน้าเว็บ
 user_input = st.text_input(
     "🔍 พิมพ์ชื่อตัวละครฝั่งตรงข้าม (ใช้เครื่องหมาย , คั่นระหว่างชื่อ):",
     placeholder="เช่น: ลีโอมอด, บาดัง, เอสเตส, ลาปู-ลาปู"
 )
 
 if user_input:
-    # เริ่มทำการวิเคราะห์เมื่อมีการใส่ข้อมูล
     enemy_team = [h.strip() for h in user_input.split(",") if h.strip()]
     results, messages = analyze_counters(enemy_team, db, thai_to_eng)
     
-    # แสดงข้อความแจ้งเตือน (Toast) หากมีปัญหา (เช่น พิมพ์ชื่อผิด)
     for msg in messages:
         st.toast(msg)
 
     st.subheader("🤖 AI Draft Coach แนะนำตัวแก้ทาง")
     
-    # สร้างแท็บแยกตามเลน
     tabs = st.tabs(["🛡️ ROAM", "🏹 GOLD LANE", "🗡️ JUNGLE", "⚔️ EXP LANE", "🔮 MID LANE"])
     lane_map = {
         "🛡️ ROAM": "Roam",
@@ -1263,7 +1197,6 @@ if user_input:
         "🔮 MID LANE": "Mid Lane"
     }
 
-    # แสดงผลข้อมูลในแต่ละแท็บ
     for tab_name, lane_key in lane_map.items():
         tab_index = list(lane_map.keys()).index(tab_name)
         with tabs[tab_index]:
@@ -1279,21 +1212,14 @@ if user_input:
                     score_label = "คะแนนรวม" if len(data['reasons']) > 1 else "คะแนน"
                     
                     if rank == 1:
-                        # แสดงอันดับ 1 ในกล่องสีเขียว (Success) พร้อมสรุปความสามารถ
                         st.success(f"⭐ **{rank}. {hero_name} ({th_name}) - 🔥 แนะนำสุดๆ! 🔥**")
                         st.write(f"💡 **เหตุผล:** {reasons} | **{score_label}:** {score}")
                         
-                        # ดึงข้อมูลสรุปจาก hero_abilities มาแสดง
-                        # จำเป็นต้องใช้ชื่ออังกฤษในการค้นหา Key ใน Dict
-                        eng_key_search = hero_name.replace("Popol and Kupa", "Popol and Kupa").replace("Yi Sun-shin", "Yi Sun-shin") # ปรับข้อยกเว้นหากจำเป็น
-                        
-                        ability_desc = hero_abilities.get(eng_key_search, None)
-                        if ability_desc:
-                            st.info(f"📝 **สรุปความสามารถ:** ตัวละครนี้{ability_desc}")
-                        
+                        if hero_name in hero_abilities:
+                            ability_desc = hero_abilities[hero_name]
+                            st.info(f"📝 **สรุปการเลือก {hero_name} ({th_name})**: เนื่องจากตัวละครนี้{ability_desc} จึงเหมาะอย่างยิ่งในการนำมาแก้ทางในตำแหน่งนี้")
                         st.divider()
                     else:
-                        # แสดงอันดับ 2 และ 3 แบบปกติ
                         st.write(f"**{rank}. {hero_name} ({th_name})**")
                         st.caption(f"💡 เหตุผล: {reasons} | {score_label}: {score}")
                         st.divider()
