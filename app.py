@@ -8,10 +8,10 @@ import difflib
 st.set_page_config(page_title="MLBB Draft Coach", page_icon="🎮", layout="centered")
 
 st.title("🎮 MLBB Draft Coach")
-st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang (อัพเดตข้อมูลล่าสุด)")
+st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
 # ---------------------------------------------------------
-# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ (UPDATE ชุดใหม่ล่าสุด)
+# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ
 # ---------------------------------------------------------
 raw_data = """
 Beatrix เบียร์ทริก ตัวดราฟแก้ทาง
@@ -331,7 +331,7 @@ Chip ชิป 3.2 บทบาท: Support, Tank | เลน: Roam Counters: Ja
 
 Julian จูเลียน ตัวดราฟแก้ทาง
 Guinevere กวินเนียร์ 4.5 บทบาท: Fighter | เลน: Exp Lane Counters: Julian
-Baxia ปาเซีย 3.4 บทบาท: Tank | เลน: Roam Counters: Julian, Exp Lane
+Baxia ปาเซีย 3.4 บทบาท: Tank | เลน: Jungle, Roam Counters: Julian
 Thamuz ธามัส 2.8 บทบาท: Fighter | เลน: Exp Lane Counters: Julian
 Minsitthar มินชิตา 2.6 บทบาท: Fighter | เลน: Exp Lane, Roam Counters: Julian
 
@@ -418,7 +418,7 @@ Karrie คารีย์ 2.6 บทบาท: Marksman | เลน: Gold Lane C
 Thamuz ธามัส ตัวดราฟแก้ทาง
 Cici ซีซี่ 6.6 บทบาท: Fighter | เลน: Exp Lane Counters: Thamuz
 Valir วาเรีย 5.2 บทบาท: Mage | เลน: Mid Lane Counters: Thamuz
-Wanwan หวานหว่าน 4.4 บทบาท: Marksman | เลน: Gold Lane Counters: Thamuz
+Wanwan หหวานหว่าน 4.4 บทบาท: Marksman | เลน: Gold Lane Counters: Thamuz
 Karrie คารีย์ 4.0 บทบาท: Marksman | เลน: Gold Lane Counters: Thamuz
 Rafaela ราฟาเอลา 2.5 บทบาท: Support | เลน: Roam Counters: Thamuz
 
@@ -437,7 +437,7 @@ Paquito ปาคิโต 5.9 บทบาท: Fighter, Assassin | เลน: E
 Valentina วาเลนติน่า 4.2 บทบาท: Mage | เลน: Mid Lane Counters: X.Borg
 
 Yin หยิน ตัวดราฟแก้ทาง
-Wanwan หวานหว่าน 9.0 บทบาท: Marksman | เลน: Gold Lane Counters: Yin
+Wanwan หหวานหว่าน 9.0 บทบาท: Marksman | เลน: Gold Lane Counters: Yin
 Esmeralda เอสเมอรัลด้า 6.2 บทบาท: Tank, Mage | เลน: Exp Lane Counters: Yin
 Kaja คาจา 4.9 บทบาท: Support, Fighter | เลน: Roam Counters: Yin
 
@@ -656,7 +656,7 @@ Silvanna ซิลวาน่า 2.3 บทบาท: Fighter | เลน: Exp 
 
 Atlas แอตลาส ตัวดราฟแก้ทาง
 Marcel มาเซลล์ 11.5 บทบาท: Support | เลน: Roam Counters: Atlas
-Wanwan หวานหว่าน 7.5 บทบาท: Marksman | เลน: Gold Lane Counters: Atlas
+Wanwan หหวานหว่าน 7.5 บทบาท: Marksman | เลน: Gold Lane Counters: Atlas
 Alice อลิซ 6.3 บทบาท: Tank, Mage | เลน: Exp Lane, Jungle Counters: Atlas
 Ling หลิง 4.9 บทบาท: Assassin | เลน: Jungle Counters: Atlas
 Lancelot แลนสลอต 2.9 บทบาท: Assassin | เลน: Jungle Counters: Atlas
@@ -681,7 +681,7 @@ Carmilla คาร์มิลลา ตัวดราฟแก้ทาง
 Valentina วาเลนติน่า 6.4 บทบาท: Mage | เลน: Mid Lane Counters: Carmilla
 X.Borg เอ็กซ์บอร์ก 6.1 บทบาท: Fighter | เลน: Exp Lane Counters: Carmilla
 Benedetta เบเนเด็ตต้า 3.7 บทบาท: Assassin, Fighter | เลน: Exp Lane Counters: Carmilla
-Wanwan หวานหว่าน 2.4 บทบาท: Marksman | เลน: Gold Lane Counters: Carmilla
+Wanwan หหวานหว่าน 2.4 บทบาท: Marksman | เลน: Gold Lane Counters: Carmilla
 Lesley เลสลี่ย์ 2.3 บทบาท: Marksman, Assassin | เลน: Gold Lane Counters: Carmilla
 Diggie ดิกกี้ 2.1 บทบาท: Support | เลน: Roam Counters: Carmilla
 
@@ -1056,7 +1056,7 @@ hero_abilities = {
 }
 
 # ---------------------------------------------------------
-# 3. ฟังก์ชันคำนวณ (UPDATE ตรรกะ Parsing ใหม่ตามโค้ด py3)
+# 3. ฟังก์ชันคำนวณ
 # ---------------------------------------------------------
 @st.cache_data
 def parse_database(data_string):
@@ -1070,7 +1070,6 @@ def parse_database(data_string):
             
         if "ตัวดราฟแก้ทาง" in line:
             name_part = line.replace("ตัวดราฟแก้ทาง", "").strip()
-            # --- UPDATE: ใช้ Regex ตามโค้ด py3 เพื่อแยกชื่อ ---
             match = re.match(r'^(.*?)\s+([ก-๙\s]+)$', name_part)
             if match:
                 current_target = match.group(1).strip().lower()
@@ -1159,24 +1158,20 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
 # ---------------------------------------------------------
 db, thai_to_eng = parse_database(raw_data)
 
-# ช่องรับข้อมูล input บนหน้าเว็บ
 user_input = st.text_input(
     "🔍 พิมพ์ชื่อตัวละครฝั่งตรงข้าม (ใช้เครื่องหมาย , คั่นระหว่างชื่อ):",
     placeholder="เช่น: ลีโอมอด, บาดัง, เอสเตส"
 )
 
 if user_input:
-    # เริ่มทำการวิเคราะห์เมื่อมีการใส่ข้อมูล
     enemy_team = [h.strip() for h in user_input.split(",") if h.strip()]
     results, messages = analyze_counters(enemy_team, db, thai_to_eng)
     
-    # แสดงข้อความแจ้งเตือน (Toast) ถ้ามี (เช่น พิมพ์ชื่อผิดแล้วระบบปรับให้)
     for msg in messages:
         st.toast(msg)
 
     st.subheader("🤖 AI Draft Coach แนะนำตัวแก้ทาง")
     
-    # สร้างแท็บแยกตามเลน
     tabs = st.tabs(["🛡️ ROAM", "🏹 GOLD LANE", "🗡️ JUNGLE", "⚔️ EXP LANE", "🔮 MID LANE"])
     lane_map = {
         "🛡️ ROAM": "Roam",
@@ -1186,7 +1181,6 @@ if user_input:
         "🔮 MID LANE": "Mid Lane"
     }
 
-    # แสดงผลข้อมูลในแต่ละแท็บ
     for tab_name, lane_key in lane_map.items():
         tab_index = list(lane_map.keys()).index(tab_name)
         with tabs[tab_index]:
@@ -1202,17 +1196,14 @@ if user_input:
                     score_label = "คะแนนรวม" if len(data['reasons']) > 1 else "คะแนน"
                     
                     if rank == 1:
-                        # แสดงอันดับ 1 ในกล่องสีเขียว (Success) พร้อมสรุปความสามารถ
                         st.success(f"⭐ **{rank}. {hero_name} ({th_name}) - 🔥 แนะนำสุดๆ! 🔥**")
                         st.write(f"💡 **เหตุผล:** {reasons} | **{score_label}:** {score}")
                         
-                        # ดึงข้อมูลสรุปจาก hero_abilities มาแสดงทันทีใต้อันดับ 1
                         if hero_name in hero_abilities:
                             ability_desc = hero_abilities[hero_name]
                             st.info(f"📝 **สรุปการเลือก {hero_name} ({th_name})**: เนื่องจากตัวละครนี้{ability_desc} จึงเหมาะอย่างยิ่งในการนำมาแก้ทางในตำแหน่งนี้")
                         st.divider()
                     else:
-                        # แสดงอันดับ 2 และ 3 แบบปกติ
                         st.write(f"**{rank}. {hero_name} ({th_name})**")
                         st.caption(f"💡 เหตุผล: {reasons} | {score_label}: {score}")
                         st.divider()
