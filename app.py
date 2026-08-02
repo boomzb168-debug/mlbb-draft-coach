@@ -11,7 +11,7 @@ st.title("🎮 MLBB Draft Coach")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
 # ---------------------------------------------------------
-# 2. ฐานข้อมูลฮีโร่
+# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ
 # ---------------------------------------------------------
 raw_data = """
 Beatrix เบียร์ทริก ตัวดราฟแก้ทาง
@@ -96,7 +96,7 @@ Karina คารีน่า 2.1 บทบาท: Assassin | เลน: Jungle C
 Hilda ฮิลด้า 2.1 บทบาท: Fighter, Tank | เลน: Roam, Exp Lane Counters: Irithel
 
 Ixia อิกเซีย ตัวดราฟแก้ทาง
-Wanwan หหวานหว่าน 7.4 บทบาท: Marksman | เลน: Gold Lane Counters: Ixia
+Wanwan หวานหว่าน 7.4 บทบาท: Marksman | เลน: Gold Lane Counters: Ixia
 Kadita คาดิต้า 5.7 บทบาท: Mage, Assassin | เลน: Mid Lane Counters: Ixia
 Hanzo ฮันโซ 5.3 บทบาท: Assassin | เลน: Jungle Counters: Ixia
 Atlas แอตลาส 4.3 บทบาท: Tank | เลน: Roam Counters: Ixia
@@ -1181,22 +1181,25 @@ if user_input:
         with tabs[tab_index]:
             heroes = results.get(lane_key, [])
             if not heroes:
-                st.info("ยังไม่มีฮีโร่แนะนำในตำแหน่งนี้")
+                st.info("⏳ รอข้อมูลตัวดราฟแก้ทาง")
             else:
                 for idx, (hero_name, data) in enumerate(heroes):
                     rank = idx + 1
                     th_name = data['th_name']
                     score = round(data['total_score'], 1)
                     reasons = ", ".join(data['reasons'])
+                    score_label = "คะแนนรวม" if len(data['reasons']) > 1 else "คะแนน"
                     
                     if rank == 1:
-                        st.success(f"⭐ **อันดับ {rank}: {hero_name} ({th_name})** — คะแนนแก้ทาง: {score}")
+                        st.success(f"⭐ **{rank}. {hero_name} ({th_name}) - 🔥 แนะนำสุดๆ! 🔥**")
+                        st.write(f"💡 **เหตุผล:** {reasons} | **{score_label}:** {score}")
+                        
+                        # แสดงสรุปอันดับ 1 ทันทีตรงนี้
+                        if hero_name in hero_abilities:
+                            ability_desc = hero_abilities[hero_name]
+                            st.info(f"📝 **สรุปการเลือก {hero_name} ({th_name})**: เนื่องจากตัวละครนี้{ability_desc} จึงเหมาะอย่างยิ่งในการนำมาแก้ทางในตำแหน่งนี้")
+                        st.divider()
                     else:
-                        st.write(f"**อันดับ {rank}: {hero_name} ({th_name})** — คะแนนแก้ทาง: {score}")
-                    
-                    st.caption(f"💡 เหตุผล: {reasons}")
-                    st.divider()
-
-                top_hero = heroes[0][0]
-                if top_hero in hero_abilities:
-                    st.info(f"📝 **สรุปตัวเลือกแนะนำ ({top_hero})**: {hero_abilities[top_hero]}")
+                        st.write(f"**{rank}. {hero_name} ({th_name})**")
+                        st.caption(f"💡 เหตุผล: {reasons} | {score_label}: {score}")
+                        st.divider()
