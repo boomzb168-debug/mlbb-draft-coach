@@ -8,10 +8,10 @@ import difflib
 st.set_page_config(page_title="MLBB Draft Coach", page_icon="🎮", layout="centered")
 
 st.title("🎮 MLBB Draft Coach")
-st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
+st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang (อัพเดตข้อมูลล่าสุด)")
 
 # ---------------------------------------------------------
-# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ
+# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ (UPDATE ชุดใหม่ล่าสุด)
 # ---------------------------------------------------------
 raw_data = """
 Beatrix เบียร์ทริก ตัวดราฟแก้ทาง
@@ -208,7 +208,7 @@ Cici ซีซี่ 5.6 บทบาท: Fighter | เลน: Exp Lane Counters
 Alpha อัลฟ่า ตัวดราฟแก้ทาง
 Diggie ดิกกี้ 6.8 บทบาท: Support | เลน: Roam Counters: Alpha
 Benedetta เบเนเด็ตต้า 6.2 บทบาท: Assassin, Fighter | เลน: Exp Lane Counters: Alpha
-Wanwan หหวานหว่าน 5.5 บทบาท: Marksman | เลน: Gold Lane Counters: Alpha
+Wanwan หวานหว่าน 5.5 บทบาท: Marksman | เลน: Gold Lane Counters: Alpha
 X.Borg เอ็กซ์บอร์ก 4.7 บทบาท: Fighter | เลน: Exp Lane Counters: Alpha
 Kimmy คิมมี่ 2.7 บทบาท: Marksman, Mage | เลน: Mid Lane, Gold Lane Counters: Alpha
 Hanzo ฮันโซ 1.0 บทบาท: Assassin | เลน: Jungle Counters: Alpha
@@ -312,7 +312,7 @@ Ling หลิง 5.7 บทบาท: Assassin | เลน: Jungle Counters: Gl
 
 Guinevere กวินเนียร์ ตัวดราฟแก้ทาง
 Masha มาช่า 5.9 บทบาท: Fighter, Tank | เลน: Exp Lane Counters: Guinevere
-Wanwan หหวานหว่าน 5.4 บทบาท: Marksman | เลน: Gold Lane Counters: Guinevere
+Wanwan หวานหว่าน 5.4 บทบาท: Marksman | เลน: Gold Lane Counters: Guinevere
 Diggie ดิกกี้ 4.8 บทบาท: Support | เลน: Roam Counters: Guinevere
 Khufra คูฟรา 4.3 บทบาท: Tank | เลน: Roam Counters: Guinevere
 
@@ -331,7 +331,7 @@ Chip ชิป 3.2 บทบาท: Support, Tank | เลน: Roam Counters: Ja
 
 Julian จูเลียน ตัวดราฟแก้ทาง
 Guinevere กวินเนียร์ 4.5 บทบาท: Fighter | เลน: Exp Lane Counters: Julian
-Baxia ปาเซีย 3.4 บทบาท: Tank | เลน: Jungle, Roam Counters: Julian
+Baxia ปาเซีย 3.4 บทบาท: Tank | เลน: Roam Counters: Julian, Exp Lane
 Thamuz ธามัส 2.8 บทบาท: Fighter | เลน: Exp Lane Counters: Julian
 Minsitthar มินชิตา 2.6 บทบาท: Fighter | เลน: Exp Lane, Roam Counters: Julian
 
@@ -418,7 +418,7 @@ Karrie คารีย์ 2.6 บทบาท: Marksman | เลน: Gold Lane C
 Thamuz ธามัส ตัวดราฟแก้ทาง
 Cici ซีซี่ 6.6 บทบาท: Fighter | เลน: Exp Lane Counters: Thamuz
 Valir วาเรีย 5.2 บทบาท: Mage | เลน: Mid Lane Counters: Thamuz
-Wanwan หหวานหว่าน 4.4 บทบาท: Marksman | เลน: Gold Lane Counters: Thamuz
+Wanwan หวานหว่าน 4.4 บทบาท: Marksman | เลน: Gold Lane Counters: Thamuz
 Karrie คารีย์ 4.0 บทบาท: Marksman | เลน: Gold Lane Counters: Thamuz
 Rafaela ราฟาเอลา 2.5 บทบาท: Support | เลน: Roam Counters: Thamuz
 
@@ -437,7 +437,7 @@ Paquito ปาคิโต 5.9 บทบาท: Fighter, Assassin | เลน: E
 Valentina วาเลนติน่า 4.2 บทบาท: Mage | เลน: Mid Lane Counters: X.Borg
 
 Yin หยิน ตัวดราฟแก้ทาง
-Wanwan หหวานหว่าน 9.0 บทบาท: Marksman | เลน: Gold Lane Counters: Yin
+Wanwan หวานหว่าน 9.0 บทบาท: Marksman | เลน: Gold Lane Counters: Yin
 Esmeralda เอสเมอรัลด้า 6.2 บทบาท: Tank, Mage | เลน: Exp Lane Counters: Yin
 Kaja คาจา 4.9 บทบาท: Support, Fighter | เลน: Roam Counters: Yin
 
@@ -656,7 +656,7 @@ Silvanna ซิลวาน่า 2.3 บทบาท: Fighter | เลน: Exp 
 
 Atlas แอตลาส ตัวดราฟแก้ทาง
 Marcel มาเซลล์ 11.5 บทบาท: Support | เลน: Roam Counters: Atlas
-Wanwan หหวานหว่าน 7.5 บทบาท: Marksman | เลน: Gold Lane Counters: Atlas
+Wanwan หวานหว่าน 7.5 บทบาท: Marksman | เลน: Gold Lane Counters: Atlas
 Alice อลิซ 6.3 บทบาท: Tank, Mage | เลน: Exp Lane, Jungle Counters: Atlas
 Ling หลิง 4.9 บทบาท: Assassin | เลน: Jungle Counters: Atlas
 Lancelot แลนสลอต 2.9 บทบาท: Assassin | เลน: Jungle Counters: Atlas
@@ -681,7 +681,7 @@ Carmilla คาร์มิลลา ตัวดราฟแก้ทาง
 Valentina วาเลนติน่า 6.4 บทบาท: Mage | เลน: Mid Lane Counters: Carmilla
 X.Borg เอ็กซ์บอร์ก 6.1 บทบาท: Fighter | เลน: Exp Lane Counters: Carmilla
 Benedetta เบเนเด็ตต้า 3.7 บทบาท: Assassin, Fighter | เลน: Exp Lane Counters: Carmilla
-Wanwan หหวานหว่าน 2.4 บทบาท: Marksman | เลน: Gold Lane Counters: Carmilla
+Wanwan หวานหว่าน 2.4 บทบาท: Marksman | เลน: Gold Lane Counters: Carmilla
 Lesley เลสลี่ย์ 2.3 บทบาท: Marksman, Assassin | เลน: Gold Lane Counters: Carmilla
 Diggie ดิกกี้ 2.1 บทบาท: Support | เลน: Roam Counters: Carmilla
 
@@ -1056,7 +1056,7 @@ hero_abilities = {
 }
 
 # ---------------------------------------------------------
-# 3. ฟังก์ชันคำนวณ
+# 3. ฟังก์ชันคำนวณ (UPDATE ตรรกะ Parsing ใหม่ตามโค้ด py3)
 # ---------------------------------------------------------
 @st.cache_data
 def parse_database(data_string):
@@ -1070,11 +1070,16 @@ def parse_database(data_string):
             
         if "ตัวดราฟแก้ทาง" in line:
             name_part = line.replace("ตัวดราฟแก้ทาง", "").strip()
-            parts = name_part.split()
-            current_target = parts[0].strip().lower()
-            if len(parts) > 1:
-                current_target_th = parts[1].strip()
-                thai_to_eng[current_target_th] = current_target
+            # --- UPDATE: ใช้ Regex ตามโค้ด py3 เพื่อแยกชื่อ ---
+            match = re.match(r'^(.*?)\s+([ก-๙\s]+)$', name_part)
+            if match:
+                current_target = match.group(1).strip().lower()
+                current_target_th = match.group(2).strip()
+            else:
+                current_target = name_part.lower()
+                current_target_th = name_part
+                
+            thai_to_eng[current_target_th] = current_target
             db[current_target] = []
         elif "Counters:" in line:
             try:
@@ -1085,6 +1090,7 @@ def parse_database(data_string):
                 name = " ".join(tokens[:-2])
                 
                 thai_to_eng[th_name.strip()] = name.strip().lower()
+                
                 role_part, rest = part2.split(" | เลน: ")
                 lane_part, target_part = rest.split(" Counters: ")
                 
@@ -1117,7 +1123,7 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
             matches = difflib.get_close_matches(clean_name, all_thai_names, n=1, cutoff=0.6)
             if matches:
                 closest_name = matches[0]
-                messages.append(f"ℹ️ ปรับคำว่า '{clean_name}' เป็น '{closest_name}' ให้โดยอัตโนมัติ")
+                messages.append(f"ℹ️ ระบบปรับคำว่า '{clean_name}' เป็น '{closest_name}' ให้โดยอัตโนมัติ")
                 processed_enemies.append(thai_to_eng[closest_name])
             else:
                 processed_enemies.append(clean_name.lower())
@@ -1153,20 +1159,24 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
 # ---------------------------------------------------------
 db, thai_to_eng = parse_database(raw_data)
 
+# ช่องรับข้อมูล input บนหน้าเว็บ
 user_input = st.text_input(
     "🔍 พิมพ์ชื่อตัวละครฝั่งตรงข้าม (ใช้เครื่องหมาย , คั่นระหว่างชื่อ):",
     placeholder="เช่น: ลีโอมอด, บาดัง, เอสเตส"
 )
 
 if user_input:
+    # เริ่มทำการวิเคราะห์เมื่อมีการใส่ข้อมูล
     enemy_team = [h.strip() for h in user_input.split(",") if h.strip()]
     results, messages = analyze_counters(enemy_team, db, thai_to_eng)
     
+    # แสดงข้อความแจ้งเตือน (Toast) ถ้ามี (เช่น พิมพ์ชื่อผิดแล้วระบบปรับให้)
     for msg in messages:
         st.toast(msg)
 
     st.subheader("🤖 AI Draft Coach แนะนำตัวแก้ทาง")
     
+    # สร้างแท็บแยกตามเลน
     tabs = st.tabs(["🛡️ ROAM", "🏹 GOLD LANE", "🗡️ JUNGLE", "⚔️ EXP LANE", "🔮 MID LANE"])
     lane_map = {
         "🛡️ ROAM": "Roam",
@@ -1176,12 +1186,13 @@ if user_input:
         "🔮 MID LANE": "Mid Lane"
     }
 
+    # แสดงผลข้อมูลในแต่ละแท็บ
     for tab_name, lane_key in lane_map.items():
         tab_index = list(lane_map.keys()).index(tab_name)
         with tabs[tab_index]:
             heroes = results.get(lane_key, [])
             if not heroes:
-                st.info("⏳ รอข้อมูลตัวดราฟแก้ทาง")
+                st.info("⏳ รอข้อมูลตัวดราฟแก้ทางสำหรับเลนนี้")
             else:
                 for idx, (hero_name, data) in enumerate(heroes):
                     rank = idx + 1
@@ -1191,15 +1202,17 @@ if user_input:
                     score_label = "คะแนนรวม" if len(data['reasons']) > 1 else "คะแนน"
                     
                     if rank == 1:
+                        # แสดงอันดับ 1 ในกล่องสีเขียว (Success) พร้อมสรุปความสามารถ
                         st.success(f"⭐ **{rank}. {hero_name} ({th_name}) - 🔥 แนะนำสุดๆ! 🔥**")
                         st.write(f"💡 **เหตุผล:** {reasons} | **{score_label}:** {score}")
                         
-                        # แสดงสรุปอันดับ 1 ทันทีตรงนี้
+                        # ดึงข้อมูลสรุปจาก hero_abilities มาแสดงทันทีใต้อันดับ 1
                         if hero_name in hero_abilities:
                             ability_desc = hero_abilities[hero_name]
                             st.info(f"📝 **สรุปการเลือก {hero_name} ({th_name})**: เนื่องจากตัวละครนี้{ability_desc} จึงเหมาะอย่างยิ่งในการนำมาแก้ทางในตำแหน่งนี้")
                         st.divider()
                     else:
+                        # แสดงอันดับ 2 และ 3 แบบปกติ
                         st.write(f"**{rank}. {hero_name} ({th_name})**")
                         st.caption(f"💡 เหตุผล: {reasons} | {score_label}: {score}")
                         st.divider()
