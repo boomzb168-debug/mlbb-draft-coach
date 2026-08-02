@@ -7,7 +7,7 @@ import difflib
 # ---------------------------------------------------------
 st.set_page_config(page_title="MLBB Draft Coach", page_icon="🎮", layout="centered")
 
-st.title("🎮 Pk MLBB Draft Hero🕹️")
+st.title("🎮 ยูริ💗นังอ้วน MLBB Draft Hero🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
 # ---------------------------------------------------------
