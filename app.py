@@ -7,7 +7,7 @@ import difflib
 # ---------------------------------------------------------
 st.set_page_config(page_title="MLBB Draft Coach", page_icon="🎮", layout="centered")
 
-st.title("🎮 MLBB Draft Coach")
+st.title("🎮 Pk MLBB Draft Hero🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
 # ---------------------------------------------------------
@@ -146,7 +146,7 @@ Baxia ปาเซีย 1.0 บทบาท: Tank | เลน: Jungle, Roam Cou
 Granger เกรนเจอร์ 0.4 บทบาท: Marksman | เลน: Gold Lane Counters: Melissa
 
 Miya มิยะ ตัวดราฟแก้ทาง
-Gatotkaca กาต็อตคาชา 3.7 บทบาท: Tank, Fighter | เลน: Roam, Exp Lane Counters: Miya
+Gatotkaca ฆโฎตกัจ 3.7 บทบาท: Tank, Fighter | เลน: Roam, Exp Lane Counters: Miya
 Beatrix เบียร์ทริก 3.6 บทบาท: Marksman | เลน: Gold Lane Counters: Miya
 Lolita โลลิตา 3.3 บทบาท: Support, Tank | เลน: Roam Counters: Miya
 Belerick เบเลริค 2.4 บทบาท: Tank | เลน: Roam Counters: Miya
@@ -172,7 +172,7 @@ Baxia ปาเซีย 2.3 บทบาท: Tank | เลน: Jungle, Roam Cou
 Granger เกรนเจอร์ 2.3 บทบาท: Marksman | เลน: Gold Lane Counters: Natan
 Arlott อาร์ลอร์ต 1.9 บทบาท: Fighter, Assassin | เลน: Exp Lane Counters: Natan
 Nolan โนแลน 1.8 บทบาท: Assassin | เลน: Jungle Counters: Natan
-Brody โบร์ดี้ 1.1 บทบาท: Marksman | เลน: Gold Lane Counters: Natan
+Brody โโบร์ดี้ 1.1 บทบาท: Marksman | เลน: Gold Lane Counters: Natan
 
 Obsidia ฮอปซิเดีย ตัวดราฟแก้ทาง
 Baxia ปาเซีย 6.4 บทบาท: Tank | เลน: Jungle, Roam Counters: Obsidia
@@ -298,7 +298,7 @@ Edith อิดิธ 4.7 บทบาท: Tank, Marksman | เลน: Exp Lane,
 Esmeralda เอสเมอรัลด้า 3.7 บทบาท: Tank, Mage | เลน: Exp Lane Counters: Freya
 Franco ฟรังค์โก้ 3.1 บทบาท: Tank | เลน: Roam Counters: Freya
 
-Gatotkaca กาต็อตคาชา ตัวดราฟแก้ทาง
+Gatotkaca ฆโฎตกัจ ตัวดราฟแก้ทาง
 X.Borg เอ็กซ์บอร์ก 5.9 บทบาท: Fighter | เลน: Exp Lane Counters: Gatotkaca
 Lesley เลสลี่ย์ 5.7 บทบาท: Marksman, Assassin | เลน: Gold Lane Counters: Gatotkaca
 Alpha อัลฟ่า 4.4 บทบาท: Fighter | เลน: Jungle, Exp Lane Counters: Gatotkaca
@@ -1057,7 +1057,7 @@ hero_abilities = {
 }
 
 # ---------------------------------------------------------
-# 3. ฟังก์ชันคำนวณ (ปรับปรุงการกรองฮีโร่ฝั่งตรงข้ามออก)
+# 3. ฟังก์ชันคำนวณ (พร้อมระบบกรองฮีโร่ฝั่งตรงข้ามออก)
 # ---------------------------------------------------------
 @st.cache_data
 def parse_database(data_string):
@@ -1141,7 +1141,7 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
             else:
                 processed_enemies.append(clean_name.lower())
 
-    # สร้างเซตรายชื่อฮีโร่ฝั่งตรงข้ามที่ค้นหา (ตัวพิมพ์เล็ก) ไว้เช็กกรองออก
+    # สร้างเซตรายชื่อฮีโร่ฝั่งตรงข้ามที่ค้นหา ไว้เช็กกรองออก
     enemy_keys_set = set(e.strip().lower() for e in processed_enemies)
 
     for enemy in processed_enemies:
@@ -1150,7 +1150,7 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
             for counter in database[enemy_key]:
                 c_name = counter['name']
                 
-                # 🚫 กรองออก: หากฮีโร่แนะนำเป็นตัวเดียวกับที่เราพิมพ์ค้นหาฝั่งตรงข้าม ให้ข้ามไป
+                # กรองออก: หากฮีโร่แนะนำเป็นตัวเดียวกับที่พิมพ์ค้นหาฝั่งตรงข้าม ให้ข้ามไป
                 if c_name.strip().lower() in enemy_keys_set:
                     continue
                 
@@ -1182,7 +1182,7 @@ db, thai_to_eng = parse_database(raw_data)
 
 user_input = st.text_input(
     "🔍 พิมพ์ชื่อตัวละครฝั่งตรงข้าม (ใช้เครื่องหมาย , คั่นระหว่างชื่อ):",
-    placeholder="เช่น: ลีโอมอด, บาดัง, เอสเตส, ลาปู-ลาปู"
+    placeholder="เช่น: ลีโอมอด, ฆโฎตกัจ, เอสเตส, ลาปู-ลาปู"
 )
 
 if user_input:
@@ -1208,7 +1208,7 @@ if user_input:
         with tabs[tab_index]:
             heroes = results.get(lane_key, [])
             if not heroes:
-                st.info("⏳ รอข้อมูลตัวดราฟแก้ทางสำหรับเลนนี้")
+                st.info("⏳ รออัพเดตข้อมูลตัวดราฟแก้ฮีโร่สำหรับเลนนี้")
             else:
                 for idx, (hero_name, data) in enumerate(heroes):
                     rank = idx + 1
