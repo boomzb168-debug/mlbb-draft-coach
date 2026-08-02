@@ -11,7 +11,7 @@ st.title("🎮 MLBB Draft Coach")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
 # ---------------------------------------------------------
-# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ (ฉบับสมบูรณ์ 100%)
+# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ
 # ---------------------------------------------------------
 raw_data = """
 Beatrix เบียร์ทริก ตัวดราฟแก้ทาง
@@ -1057,7 +1057,7 @@ hero_abilities = {
 }
 
 # ---------------------------------------------------------
-# 3. ฟังก์ชันคำนวณ (Robust Parsing Logic)
+# 3. ฟังก์ชันคำนวณ (ปรับปรุงการกรองฮีโร่ฝั่งตรงข้ามออก)
 # ---------------------------------------------------------
 @st.cache_data
 def parse_database(data_string):
@@ -1072,7 +1072,6 @@ def parse_database(data_string):
             
         if "ตัวดราฟแก้ทาง" in line:
             name_part = line.replace("ตัวดราฟแก้ทาง", "").strip()
-            # ใช้ Regex ค้นหาอักษรไทยตัวแรกเพื่อแยกชื่อภาษาอังกฤษออกจากภาษาไทย
             match_thai = re.search(r'[ก-๙]', name_part)
             if match_thai:
                 idx = match_thai.start()
@@ -1092,7 +1091,6 @@ def parse_database(data_string):
                 tokens = part1.split()
                 score = float(tokens[-1])
                 
-                # แยกชื่อภาษาไทยและภาษาอังกฤษของฮีโร่แก้ทาง
                 match_thai = re.search(r'[ก-๙]', part1)
                 if match_thai:
                     idx = match_thai.start()
@@ -1143,14 +1141,22 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
             else:
                 processed_enemies.append(clean_name.lower())
 
+    # สร้างเซตรายชื่อฮีโร่ฝั่งตรงข้ามที่ค้นหา (ตัวพิมพ์เล็ก) ไว้เช็กกรองออก
+    enemy_keys_set = set(e.strip().lower() for e in processed_enemies)
+
     for enemy in processed_enemies:
         enemy_key = enemy.strip().lower()
         if enemy_key in database:
             for counter in database[enemy_key]:
+                c_name = counter['name']
+                
+                # 🚫 กรองออก: หากฮีโร่แนะนำเป็นตัวเดียวกับที่เราพิมพ์ค้นหาฝั่งตรงข้าม ให้ข้ามไป
+                if c_name.strip().lower() in enemy_keys_set:
+                    continue
+                
                 hero_lanes = [l.strip() for l in counter['lane'].split(',')]
                 for l in hero_lanes:
                     if l in suggestions:
-                        c_name = counter['name']
                         if c_name not in suggestions[l]:
                             suggestions[l][c_name] = {
                                 "th_name": counter['th_name'],
