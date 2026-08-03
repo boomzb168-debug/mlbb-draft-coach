@@ -1,6 +1,6 @@
-import streamlit as st
-import re
 import difflib
+import re
+import streamlit as st
 
 # ---------------------------------------------------------
 # 1. ตั้งค่าหน้าตาของแอปพลิเคชัน
@@ -13,6 +13,10 @@ st.markdown(
     .stApp {
         background-color: #0b0f19;
         color: #f8fafc;
+    }
+    /* ปรับแต่งสีข้อความทั่วไปให้อ่านง่าย */
+    p, span, label {
+        color: #f8fafc !important;
     }
     </style>
     """,
@@ -898,7 +902,7 @@ Alucard อลูการ์ด 1.9 บทบาท: Fighter, Assassin | เล
 Joy จอย ตัวดราฟแก้ทาง
 Moskov มอสโคฟ 7.1 บทบาท: Marksman | เลน: Gold Lane Counters: Joy
 Cyclops ไซคลอปส์ 6.0 บทบาท: Mage | เลน: Mid Lane Counters: Joy
-Brody โ보ร์ดี้ 4.6 บทบาท: Marksman | เลน: Gold Lane Counters: Joy
+Brody โโบร์ดี้ 4.6 บทบาท: Marksman | เลน: Gold Lane Counters: Joy
 Eudora ยูโดร่า 2.3 บทบาท: Mage | เลน: Mid Lane Counters: Joy
 Ruby รูบี้ 2.2 บทบาท: Fighter | เลน: Exp Lane Counters: Joy
 Hirara ฮิราระ 2.1 บทบาท: Assassin | เลน: Jungle Counters: Joy
@@ -1068,125 +1072,137 @@ heroAbilities = {
     "Ling": "มีความสามารถในการไต่กำแพงด้วยความคล่องตัวสูง พุ่งโจมตีศัตรูจากมุมอับ และสร้างดาเมจเบิสต์รุนแรง",
     "Roger": "มีความสามารถในการแปลงร่างเป็นมนุษย์และหมาป่าเพื่อไล่ล่าศัตรู สร้างดาเมจกายภาพรุนแรง และมีความคล่องตัวสูง",
     "Natalia": "มีความสามารถในการล่องหนเข้าหาศัตรูจากมุมมืด ลอบสังหารเป้าหมายแนวหลังได้อย่างรวดเร็ว และสร้างความกดดันให้แผนที่",
-    "Dyrroth": "มีความสามารถในการลดเกราะของศัตรูอย่างรุนแรง สร้างดาเมจกายภาพเบิสต์ที่รุนแรง และดูดเลือดเพื่อต่อสู้ตัวต่อตัวได้อย่างยอดเยี่ยม"
+    "Dyrroth": "มีความสามารถในการลดเกราะของศัตรูอย่างรุนแรง สร้างดาเมจกายภาพเบิสต์ที่รุนแรง และดูดเลือดเพื่อต่อสู้ตัวต่อตัวได้อย่างยอดเยี่ยม",
 }
+
 
 # ---------------------------------------------------------
 # 3. ฟังก์ชันประมวลผลข้อมูล
 # ---------------------------------------------------------
 @st.cache_data
 def parse_database(data_string):
-    db = {}
-    thai_to_eng = {} 
-    current_target = ""
-    
-    for line in data_string.strip().split('\n'):
-        line = line.strip()
-        if not line: 
-            continue
-            
-        if "ตัวดราฟแก้ทาง" in line:
-            name_part = line.replace("ตัวดราฟแก้ทาง", "").strip()
-            match_thai = re.search(r'[ก-๙]', name_part)
-            if match_thai:
-                idx = match_thai.start()
-                eng_name = name_part[:idx].strip()
-                th_name = name_part[idx:].strip()
-            else:
-                eng_name = name_part.strip()
-                th_name = name_part.strip()
-                
-            current_target = eng_name.lower()
-            thai_to_eng[th_name] = current_target
-            db[current_target] = []
-            
-        elif "Counters:" in line:
-            try:
-                part1, part2 = line.split(" บทบาท: ")
-                tokens = part1.split()
-                score = float(tokens[-1])
-                
-                match_thai = re.search(r'[ก-๙]', part1)
-                if match_thai:
-                    idx = match_thai.start()
-                    c_eng_name = part1[:idx].strip()
-                    c_th_name = part1[idx:part1.rfind(tokens[-1])].strip()
-                else:
-                    c_eng_name = " ".join(tokens[:-1])
-                    c_th_name = " ".join(tokens[:-1])
-                
-                role_part, rest = part2.split(" | เลน: ")
-                lane_part, target_part = rest.split(" Counters: ")
-                
-                thai_to_eng[c_th_name.strip()] = c_eng_name.strip().lower()
-                
-                if current_target in db:
-                    db[current_target].append({
-                        "name": c_eng_name.strip(),
-                        "th_name": c_th_name.strip(),
-                        "score": score,
-                        "role": role_part.strip(),
-                        "lane": lane_part.strip()
-                    })
-            except Exception:
-                continue
-                
-    return db, thai_to_eng
+  db = {}
+  thai_to_eng = {}
+  current_target = ""
+
+  for line in data_string.strip().split("\n"):
+    line = line.strip()
+    if not line:
+      continue
+
+    if "ตัวดราฟแก้ทาง" in line:
+      name_part = line.replace("ตัวดราฟแก้ทาง", "").strip()
+      match_thai = re.search(r"[ก-๙]", name_part)
+      if match_thai:
+        idx = match_thai.start()
+        eng_name = name_part[:idx].strip()
+        th_name = name_part[idx:].strip()
+      else:
+        eng_name = name_part.strip()
+        th_name = name_part.strip()
+
+      current_target = eng_name.lower()
+      thai_to_eng[th_name] = current_target
+      db[current_target] = []
+
+    elif "Counters:" in line:
+      try:
+        part1, part2 = line.split(" บทบาท: ")
+        tokens = part1.split()
+        score = float(tokens[-1])
+
+        match_thai = re.search(r"[ก-๙]", part1)
+        if match_thai:
+          idx = match_thai.start()
+          c_eng_name = part1[:idx].strip()
+          c_th_name = part1[idx : part1.rfind(tokens[-1])].strip()
+        else:
+          c_eng_name = " ".join(tokens[:-1])
+          c_th_name = " ".join(tokens[:-1])
+
+        role_part, rest = part2.split(" | เลน: ")
+        lane_part, target_part = rest.split(" Counters: ")
+
+        thai_to_eng[c_th_name.strip()] = c_eng_name.strip().lower()
+
+        if current_target in db:
+          db[current_target].append({
+              "name": c_eng_name.strip(),
+              "th_name": c_th_name.strip(),
+              "score": score,
+              "role": role_part.strip(),
+              "lane": lane_part.strip(),
+          })
+      except Exception:
+        continue
+
+  return db, thai_to_eng
+
 
 def analyze_counters(enemy_team_input, database, thai_to_eng):
-    lanes = ["Roam", "Gold Lane", "Jungle", "Exp Lane", "Mid Lane"]
-    suggestions = {lane: {} for lane in lanes}
-    all_thai_names = list(thai_to_eng.keys())
-    
-    processed_enemies = []
-    messages = []
-    
-    for item in enemy_team_input:
-        clean_name = item.strip()
-        if not clean_name:
-            continue
-        if clean_name in thai_to_eng:
-            processed_enemies.append(thai_to_eng[clean_name])
-        else:
-            matches = difflib.get_close_matches(clean_name, all_thai_names, n=1, cutoff=0.6)
-            if matches:
-                closest_name = matches[0]
-                messages.append(f"ℹ️ ระบบปรับคำว่า '{clean_name}' เป็น '{closest_name}' ให้โดยอัตโนมัติ")
-                processed_enemies.append(thai_to_eng[closest_name])
-            else:
-                processed_enemies.append(clean_name.lower())
+  lanes = ["Roam", "Gold Lane", "Jungle", "Exp Lane", "Mid Lane"]
+  suggestions = {lane: {} for lane in lanes}
+  all_thai_names = list(thai_to_eng.keys())
 
-    enemy_keys_set = set(e.strip().lower() for e in processed_enemies)
+  processed_enemies = []
+  messages = []
 
-    for enemy in processed_enemies:
-        enemy_key = enemy.strip().lower()
-        if enemy_key in database:
-            for counter in database[enemy_key]:
-                c_name = counter['name']
-                
-                if c_name.strip().lower() in enemy_keys_set:
-                    continue
-                
-                hero_lanes = [l.strip() for l in counter['lane'].split(',')]
-                for l in hero_lanes:
-                    if l in suggestions:
-                        if c_name not in suggestions[l]:
-                            suggestions[l][c_name] = {
-                                "th_name": counter['th_name'],
-                                "total_score": 0.0,
-                                "reasons": []
-                            }
-                        suggestions[l][c_name]['total_score'] += counter['score']
-                        suggestions[l][c_name]['reasons'].append(f"ชนะทาง {enemy.capitalize()}")
-        else:
-            messages.append(f"⚠️ ไม่พบข้อมูลของฮีโร่: {enemy}")
+  for item in enemy_team_input:
+    clean_name = item.strip()
+    if not clean_name:
+      continue
+    if clean_name in thai_to_eng:
+      processed_enemies.append(thai_to_eng[clean_name])
+    else:
+      matches = difflib.get_close_matches(
+          clean_name, all_thai_names, n=1, cutoff=0.6
+      )
+      if matches:
+        closest_name = matches[0]
+        messages.append(
+            f"ℹ️ ระบบปรับคำว่า '{clean_name}' เป็น '{closest_name}'"
+            " ให้โดยอัตโนมัติ"
+        )
+        processed_enemies.append(thai_to_eng[closest_name])
+      else:
+        processed_enemies.append(clean_name.lower())
 
-    final_picks = {}
-    for lane in lanes:
-        sorted_heroes = sorted(suggestions[lane].items(), key=lambda x: x[1]['total_score'], reverse=True)
-        final_picks[lane] = sorted_heroes[:3]
-            
-    return final_picks, messages
+  enemy_keys_set = set(e.strip().lower() for e in processed_enemies)
+
+  for enemy in processed_enemies:
+    enemy_key = enemy.strip().lower()
+    if enemy_key in database:
+      for counter in database[enemy_key]:
+        c_name = counter["name"]
+
+        if c_name.strip().lower() in enemy_keys_set:
+          continue
+
+        hero_lanes = [l.strip() for l in counter["lane"].split(",")]
+        for l in hero_lanes:
+          if l in suggestions:
+            if c_name not in suggestions[l]:
+              suggestions[l][c_name] = {
+                  "th_name": counter["th_name"],
+                  "total_score": 0.0,
+                  "reasons": [],
+              }
+            suggestions[l][c_name]["total_score"] += counter["score"]
+            suggestions[l][c_name]["reasons"].append(
+                f"ชนะทาง {enemy.capitalize()}"
+            )
+    else:
+      messages.append(f"⚠️ ไม่พบข้อมูลของฮีโร่: {enemy}")
+
+  final_picks = {}
+  for lane in lanes:
+    sorted_heroes = sorted(
+        suggestions[lane].items(), key=lambda x: x[1]["total_score"], reverse=True
+    )
+    final_picks[lane] = sorted_heroes[:3]
+
+  return final_picks, messages
+
 
 # ---------------------------------------------------------
 # 4. ส่วนหน้าตาแอปพลิเคชัน (Streamlit UI)
@@ -1195,50 +1211,66 @@ db, thai_to_eng = parse_database(rawData)
 
 user_input = st.text_input(
     "🔍 พิมพ์ชื่อตัวละครฝั่งตรงข้าม (ใช้เครื่องหมาย , คั่นระหว่างชื่อ):",
-    placeholder="เช่น: ลีโอมอร์ด, ฆโฎตกัจ, เอสเตส, ลาปู-ลาปู"
+    placeholder="เช่น: ลีโอมอร์ด, ฆโฎตกัจ, เอสเตส, ลาปู-ลาปู",
 )
 
 if user_input:
-    enemy_team = [h.strip() for h in user_input.split(",") if h.strip()]
-    results, messages = analyze_counters(enemy_team, db, thai_to_eng)
-    
-    for msg in messages:
-        st.toast(msg)
+  enemy_team = [h.strip() for h in user_input.split(",") if h.strip()]
+  results, messages = analyze_counters(enemy_team, db, thai_to_eng)
 
-    st.subheader("🤖 AI Draft Coach แนะนำตัวแก้ทาง")
-    
-    tabs = st.tabs(["🛡️ ROAM", "🏹 GOLD LANE", "🗡️ JUNGLE", "⚔️ EXP LANE", "🔮 MID LANE"])
-    lane_map = {
-        "🛡️ ROAM": "Roam",
-        "🏹 GOLD LANE": "Gold Lane",
-        "🗡️ JUNGLE": "Jungle",
-        "⚔️ EXP LANE": "Exp Lane",
-        "🔮 MID LANE": "Mid Lane"
-    }
+  for msg in messages:
+    st.toast(msg)
 
-    for tab_name, lane_key in lane_map.items():
-        tab_index = list(lane_map.keys()).index(tab_name)
-        with tabs[tab_index]:
-            heroes = results.get(lane_key, [])
-            if not heroes:
-                st.info("⏳ รออัพเดตข้อมูลตัวดราฟแก้ฮีโร่สำหรับเลนนี้")
-            else:
-                for idx, (hero_name, data) in enumerate(heroes):
-                    rank = idx + 1
-                    th_name = data['th_name']
-                    score = round(data['total_score'], 1)
-                    reasons = ", ".join(data['reasons'])
-                    score_label = "คะแนนรวม" if len(data['reasons']) > 1 else "คะแนน"
-                    
-                    if rank == 1:
-                        st.success(f"⭐ **{rank}. {hero_name} ({th_name}) - 🔥 แนะนำสุดๆ! 🔥**")
-                        st.write(f"💡 **เหตุผล:** {reasons} | **{score_label}:** {score}")
-                        
-                        if hero_name in heroAbilities:
-                            ability_desc = heroAbilities[hero_name]
-                            st.info(f"📝 **สรุปการเลือก {hero_name} ({th_name})**: เนื่องจากตัวละครนี้{ability_desc} จึงเหมาะอย่างยิ่งในการนำมาแก้ทางในตำแหน่งนี้")
-                        st.divider()
-                    else:
-                        st.write(f"**{rank}. {hero_name} ({th_name})**")
-                        st.caption(f"💡 เหตุผล: {reasons} | {score_label}: {score}")
-                        st.divider()
+  st.subheader("🤖 AI Draft Coach แนะนำตัวแก้ทาง")
+
+  tabs = st.tabs(
+      ["🛡️ ROAM", "🏹 GOLD LANE", "🗡️ JUNGLE", "⚔️ EXP LANE", "🔮 MID LANE"]
+  )
+  lane_map = {
+      "🛡️ ROAM": "Roam",
+      "🏹 GOLD LANE": "Gold Lane",
+      "🗡️ JUNGLE": "Jungle",
+      "⚔️ EXP LANE": "Exp Lane",
+      "🔮 MID LANE": "Mid Lane",
+  }
+
+  for tab_name, lane_key in lane_map.items():
+    tab_index = list(lane_map.keys()).index(tab_name)
+    with tabs[tab_index]:
+      heroes = results.get(lane_key, [])
+      if not heroes:
+        st.info("⏳ รออัพเดตข้อมูลตัวดราฟแก้ฮีโร่สำหรับเลนนี้")
+      else:
+        for idx, (hero_name, data) in enumerate(heroes):
+          rank = idx + 1
+          th_name = data["th_name"]
+          score = round(data["total_score"], 1)
+          reasons = ", ".join(data["reasons"])
+          score_label = "คะแนนรวม" if len(data["reasons"]) > 1 else "คะแนน"
+
+          if rank == 1:
+            st.success(
+                f"⭐ **{rank}. {hero_name} ({th_name}) - 🔥 แนะนำสุดๆ! 🔥**"
+            )
+            st.write(
+                f"💡 **เหตุผล:** {reasons} | **{score_label}:** {score}"
+            )
+
+            if hero_name in heroAbilities:
+              ability_desc = heroAbilities[hero_name]
+              # ใช้ HTML กำหนดสีตัวหนังสือให้อ่านง่ายขึ้นบนพื้นหลังมืด
+              st.markdown(
+                  f"""
+                            <div style="background-color: #1e293b; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 0 8px 8px 0; color: #93c5fd; margin-top: 10px; font-size: 14px; line-height: 1.5;">
+                                📝 <b>สรุปการเลือก {hero_name} ({th_name}):</b> เนื่องจากตัวละครนี้{ability_desc} จึงเหมาะอย่างยิ่งในการนำมาแก้ทางในตำแหน่งนี้
+                            </div>
+                            """,
+                  unsafe_allow_html=True,
+              )
+            st.divider()
+          else:
+            st.write(f"**{rank}. {hero_name} ({th_name})**")
+            st.caption(
+                f"💡 เหตุผล: {reasons} | {score_label}: {score}"
+            )
+            st.divider()
