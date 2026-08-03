@@ -36,7 +36,7 @@ st.markdown(
         color: #ffffff !important; 
         border: 1px solid #3b82f6 !important; 
         border-radius: 30px !important;
-        padding: 4px 6px !important;
+        padding: 5px 8px !important;
         width: 100% !important; 
     }
     div.stButton > button p {
@@ -95,17 +95,17 @@ st.markdown(
         color: #ffffff !important;
     }
 
-    /* 📱 บังคับให้แถวฮีโร่ฮิตเรียงเป็นแนวนอน 3 คอลัมน์ชิดกันตลอดเวลาทุกหน้าจอ */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 6px !important;
+    /* 📱 บังคับให้บล็อกฮีโร่ฮิตเรียงเป็นกริด 3 คอลัมน์พอดีจอ ไม่ให้ล้นออกนอกจอ */
+    .recent-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 8px;
     }
-    [data-testid="column"] {
-        flex: 1 1 33.33% !important;
-        min-width: 0px !important;
-        padding: 0 !important;
+    .recent-grid > div {
+        flex: 0 0 31.5%;
+        max-width: 31.5%;
     }
     </style>
     """,
@@ -1305,18 +1305,17 @@ with st.sidebar:
 st.title("🎮 Pk MLBB Draft Hero 🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
-# ⭐ กล่องฮีโร่ฮิต จัดวางเป็นแนวนอน 3 คอลัมน์ชิดกันพอดีตามภาพตัวอย่าง
+# ⭐ กล่องฮีโร่ฮิต จัดเรียงด้วย Pure CSS Grid/Flex ป้องกันล้นจอ
 with st.container(border=True):
-    st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 15px; margin-bottom: 8px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 15px; margin-bottom: 4px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
     
     recent = st.session_state.recent_searches
-    for i in range(0, len(recent), 3):
-        cols = st.columns(3)
-        for j in range(3):
-            if i + j < len(recent):
-                with cols[j]:
-                    hero_name = recent[i + j]
-                    st.button(f"⭐ {hero_name}", key=f"chip_{i+j}", on_click=append_to_query, args=(hero_name,))
+    st.markdown('<div class="recent-grid">', unsafe_allow_html=True)
+    for idx, hero_name in enumerate(recent):
+        # ใช้ container เปล่าๆ ครอบปุ่มเพื่อให้ CSS ควบคุมการจัดวางได้สมบูรณ์
+        with st.container():
+            st.button(f"⭐ {hero_name}", key=f"chip_{idx}", on_click=append_to_query, args=(hero_name,))
+    st.markdown('</div>', unsafe_allow_html=True)
 
 st.write("") 
 
