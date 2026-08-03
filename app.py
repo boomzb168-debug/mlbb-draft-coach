@@ -1,5 +1,5 @@
 from datetime import datetime
-import difflig
+import difflib
 import json
 import re
 import streamlit as st
@@ -32,7 +32,6 @@ st.markdown(
     p, span, label, h1, h2, h3 {
         color: var(--text-main) !important;
     }
-    /* ปรับแต่งช่องป้อนข้อมูลและปุ่มใน Streamlit ให้เข้ากับธีม */
     .stTextInput input {
         background-color: #0b0f19 !important;
         color: #fff !important;
@@ -1310,9 +1309,7 @@ Mathilda มาธิลดา 0.2 บทบาท: Support, Assassin | เล�
 Cyclops ไซคลอปส์ 0.2 บทบาท: Mage | เลน: Mid Lane Counters: Yi Sun-shin
 """
 
-# ---------------------------------------------------------
-# 3. ฟังก์ชันประมวลผลฐานข้อมูล
-# ---------------------------------------------------------
+
 @st.cache_data
 def parse_database(data_string):
   db = {}
@@ -1385,23 +1382,18 @@ def parse_database(data_string):
 
 db, thai_to_eng = parse_database(rawData)
 
-# ---------------------------------------------------------
-# 4. ส่วน Sidebar และแสดงผลหน้าหลัก Streamlit
-# ---------------------------------------------------------
 with st.sidebar:
   st.subheader("📌 เมนู")
   if st.button("🔍 ค้นหาตัวแก้ทาง"):
     st.rerun()
   show_tier_sidebar = st.checkbox("🔥 ดู Tier List ฮีโร่ฮิต", value=False)
   st.markdown("---")
-  # ส่วนแสดงวันเวลาอัปเดตออโต้ใน Sidebar
   now_str = datetime.now().strftime("%Aที่ %d %B %Y - %H:%M:%S")
   st.caption(f"🕒 อัปเดตล่าสุด:\n{now_str}")
 
 st.title("🎮 Pk MLBB Draft Hero 🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
-# Toggle แสดง Tier List หน้าหลัก
 if "show_lobby_tier" not in st.session_state:
   st.session_state.show_lobby_tier = False
 
@@ -1426,7 +1418,6 @@ if st.session_state.show_lobby_tier or show_tier_sidebar:
         st.info(f"📝 **ความสามารถเด่น:** {heroAbilities[hero['name']]}")
       st.divider()
 
-# จัดการประวัติการค้นหาล่าสุด (Recent Searches)
 if "recent_searches" not in st.session_state:
   st.session_state.recent_searches = [
       "เบียร์ทริก",
@@ -1452,7 +1443,6 @@ for i, hero_name in enumerate(st.session_state.recent_searches):
           st.session_state.enemy_input = hero_name + ", "
       st.rerun()
 
-# ช่องค้นหาฮีโร่ฝั่งตรงข้าม
 if "enemy_input" not in st.session_state:
   st.session_state.enemy_input = ""
 
@@ -1462,7 +1452,6 @@ user_input = st.text_input(
     placeholder="พิมพ์ชื่อฮีโร่...",
 )
 
-# ระบบ Autocomplete แสดงคำแนะนำขณะพิมพ์
 if user_input.strip():
   parts = [p.strip() for p in user_input.split(",")]
   current_term = parts[-1] if parts else ""
@@ -1479,10 +1468,6 @@ if user_input.strip():
     if matches:
       st.caption("💡 คำแนะนำฮีโร่ใกล้เคียง:")
       sug_cols = st.columns(min(len(matches[:5]), 5))
-      for idx, (th_n, eng_n)
-
-
-# [Streamlit Code Continued]
       for idx, (th_n, eng_n) in enumerate(matches[:5]):
         with sug_cols[idx % len(sug_cols)]:
           if st.button(f"{th_n}", key=f"sug_{th_n}_{idx}"):
@@ -1490,7 +1475,6 @@ if user_input.strip():
             st.session_state.enemy_input = ", ".join(parts) + ", "
             st.rerun()
 
-# ปุ่มกดค้นหาตัวแก้ทางหลัก
 if st.button("🔍 ค้นหาตัวแก้ทาง", type="primary"):
   if user_input.strip():
     enemies = [e.strip() for e in user_input.split(",") if e.strip()]
@@ -1544,7 +1528,6 @@ if st.button("🔍 ค้นหาตัวแก้ทาง", type="primary"):
     if not has_unknown:
       final_str = ", ".join(corrected_names) + ", "
       st.session_state.enemy_input = final_str
-      # บันทึกประวัติการค้นหาล่าสุด
       for cn in corrected_names:
         if cn not in st.session_state.recent_searches:
           st.session_state.recent_searches.insert(0, cn)
