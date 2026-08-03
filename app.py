@@ -7,13 +7,25 @@ import difflib
 # ---------------------------------------------------------
 st.set_page_config(page_title="MLBB Draft Coach", page_icon="🎮", layout="centered")
 
-st.title("🎮Pk MLBB Draft Hero🕹️")
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #0b0f19;
+        color: #f8fafc;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.title("🎮 Pk MLBB Draft Hero 🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
 # ---------------------------------------------------------
-# 2. ฐานข้อมูลฮีโร่และสรุปความสามารถ
+# 2. ข้อมูลดิบ (Database) และพจนานุกรมความสามารถ
 # ---------------------------------------------------------
-raw_data = """
+rawData = """
 Beatrix เบียร์ทริก ตัวดราฟแก้ทาง
 Khufra คูฟรา 5.4 บทบาท: Tank | เลน: Roam Counters: Beatrix
 Marcel มาเซลล์ 4.4 บทบาท: Support | เลน: Roam Counters: Beatrix
@@ -886,7 +898,7 @@ Alucard อลูการ์ด 1.9 บทบาท: Fighter, Assassin | เล
 Joy จอย ตัวดราฟแก้ทาง
 Moskov มอสโคฟ 7.1 บทบาท: Marksman | เลน: Gold Lane Counters: Joy
 Cyclops ไซคลอปส์ 6.0 บทบาท: Mage | เลน: Mid Lane Counters: Joy
-Brody โบร์ดี้ 4.6 บทบาท: Marksman | เลน: Gold Lane Counters: Joy
+Brody โ보ร์ดี้ 4.6 บทบาท: Marksman | เลน: Gold Lane Counters: Joy
 Eudora ยูโดร่า 2.3 บทบาท: Mage | เลน: Mid Lane Counters: Joy
 Ruby รูบี้ 2.2 บทบาท: Fighter | เลน: Exp Lane Counters: Joy
 Hirara ฮิราระ 2.1 บทบาท: Assassin | เลน: Jungle Counters: Joy
@@ -944,8 +956,7 @@ Mathilda มาธิลดา 0.2 บทบาท: Support, Assassin | เล�
 Cyclops ไซคลอปส์ 0.2 บทบาท: Mage | เลน: Mid Lane Counters: Yi Sun-shin
 """
 
-# พจนานุกรมสรุปความสามารถของฮีโร่ทุกตัว (ครบถ้วนทุกตัว)
-hero_abilities = {
+heroAbilities = {
     "Minsitthar": "มีความสามารถในการดึง ล็อคเป้าหมาย และยกเลิกสกิลพุ่งตัวของฮีโร่สายไฟต์เตอร์/แอสซาซิน",
     "Faramis": "มีความสามารถในการสร้างโล่ชุบชีวิตเพื่อนร่วมทีมและทำดาเมจวงกว้าง",
     "Edith": "มีความสามารถในการสลับร่างเป็นแทงค์รับดาเมจและเปลี่ยนเป็นมาร์คแมนยิงไกลเพื่อทำดาเมจปิดเกม",
@@ -1053,11 +1064,15 @@ hero_abilities = {
     "Suyou": "มีความสามารถในการสลับรูปแบบการโจมตีทั้งรวดเร็วและรุนแรง",
     "Yi Sun-shin": "มีความสามารถในการยิงธนูและฟันดาบสลับระยะ พร้อมใช้เรือเปิดแมพ",
     "Hanzo": "มีความสามารถในการปลดร่างเงาปีศาจออกไปฟาร์มและโจมตีแนวหลังจากระยะไกลได้อย่างปลอดภัย",
-    "Nolan": "มีความสามารถในการสร้างรอยแยกมิติเพื่อสะสมดาเมจเบิสต์และเคลื่อนที่พุ่งทะลวงได้อย่างรวดเร็วต่อเนื่อง"
+    "Nolan": "มีความสามารถในการสร้างรอยแยกมิติเพื่อสะสมดาเมจเบิสต์และเคลื่อนที่พุ่งทะลวงได้อย่างรวดเร็วต่อเนื่อง",
+    "Ling": "มีความสามารถในการไต่กำแพงด้วยความคล่องตัวสูง พุ่งโจมตีศัตรูจากมุมอับ และสร้างดาเมจเบิสต์รุนแรง",
+    "Roger": "มีความสามารถในการแปลงร่างเป็นมนุษย์และหมาป่าเพื่อไล่ล่าศัตรู สร้างดาเมจกายภาพรุนแรง และมีความคล่องตัวสูง",
+    "Natalia": "มีความสามารถในการล่องหนเข้าหาศัตรูจากมุมมืด ลอบสังหารเป้าหมายแนวหลังได้อย่างรวดเร็ว และสร้างความกดดันให้แผนที่",
+    "Dyrroth": "มีความสามารถในการลดเกราะของศัตรูอย่างรุนแรง สร้างดาเมจกายภาพเบิสต์ที่รุนแรง และดูดเลือดเพื่อต่อสู้ตัวต่อตัวได้อย่างยอดเยี่ยม"
 }
 
 # ---------------------------------------------------------
-# 3. ฟังก์ชันคำนวณ (พร้อมระบบกรองฮีโร่ฝั่งตรงข้ามออก)
+# 3. ฟังก์ชันประมวลผลข้อมูล
 # ---------------------------------------------------------
 @st.cache_data
 def parse_database(data_string):
@@ -1141,7 +1156,6 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
             else:
                 processed_enemies.append(clean_name.lower())
 
-    # สร้างเซตรายชื่อฮีโร่ฝั่งตรงข้ามที่ค้นหา ไว้เช็กกรองออก
     enemy_keys_set = set(e.strip().lower() for e in processed_enemies)
 
     for enemy in processed_enemies:
@@ -1150,7 +1164,6 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
             for counter in database[enemy_key]:
                 c_name = counter['name']
                 
-                # กรองออก: หากฮีโร่แนะนำเป็นตัวเดียวกับที่พิมพ์ค้นหาฝั่งตรงข้าม ให้ข้ามไป
                 if c_name.strip().lower() in enemy_keys_set:
                     continue
                 
@@ -1178,11 +1191,11 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
 # ---------------------------------------------------------
 # 4. ส่วนหน้าตาแอปพลิเคชัน (Streamlit UI)
 # ---------------------------------------------------------
-db, thai_to_eng = parse_database(raw_data)
+db, thai_to_eng = parse_database(rawData)
 
 user_input = st.text_input(
     "🔍 พิมพ์ชื่อตัวละครฝั่งตรงข้าม (ใช้เครื่องหมาย , คั่นระหว่างชื่อ):",
-    placeholder="เช่น: ลีโอมอด, ฆโฎตกัจ, เอสเตส, ลาปู-ลาปู"
+    placeholder="เช่น: ลีโอมอร์ด, ฆโฎตกัจ, เอสเตส, ลาปู-ลาปู"
 )
 
 if user_input:
@@ -1221,8 +1234,8 @@ if user_input:
                         st.success(f"⭐ **{rank}. {hero_name} ({th_name}) - 🔥 แนะนำสุดๆ! 🔥**")
                         st.write(f"💡 **เหตุผล:** {reasons} | **{score_label}:** {score}")
                         
-                        if hero_name in hero_abilities:
-                            ability_desc = hero_abilities[hero_name]
+                        if hero_name in heroAbilities:
+                            ability_desc = heroAbilities[hero_name]
                             st.info(f"📝 **สรุปการเลือก {hero_name} ({th_name})**: เนื่องจากตัวละครนี้{ability_desc} จึงเหมาะอย่างยิ่งในการนำมาแก้ทางในตำแหน่งนี้")
                         st.divider()
                     else:
