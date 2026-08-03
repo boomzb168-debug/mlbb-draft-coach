@@ -30,18 +30,18 @@ st.markdown(
         color: var(--text-main) !important;
     }
     
-    /* 🎨 ตกแต่งปุ่มฮีโร่และปุ่มคำแนะนำให้อ่านง่ายและเป็นระเบียบคล้ายแคปซูล */
+    /* 🎨 ตกแต่งปุ่มฮีโร่ฮิตทรงแคปซูล จัดระยะชิดพอดีไม่ล้นจอ */
     div.stButton > button {
         background-color: #1a263d !important; 
         color: #ffffff !important; 
         border: 1px solid #3b82f6 !important; 
         border-radius: 30px !important;
-        padding: 5px 10px !important;
+        padding: 4px 8px !important;
         width: 100% !important; 
     }
     div.stButton > button p {
         color: #ffffff !important;
-        font-size: 14px !important;
+        font-size: 13px !important;
         margin: 0 !important;
         white-space: nowrap !important;
         overflow: hidden !important;
@@ -80,31 +80,30 @@ st.markdown(
         border-color: var(--primary-color) !important;
         box-shadow: 0 0 8px rgba(255, 59, 59, 0.4) !important;
     }
-    /* แก้ไขสีตัวหนังสือ Placeholder ให้อ่านง่ายขึ้น */
     .stTextInput input::placeholder {
         color: #cbd5e1 !important; 
         opacity: 1 !important;
     }
 
-    /* 📱 ควบคุมการจัดเรียงคอลัมน์ในมือถือ ป้องกันปุ่มตกขอบจอ */
+    /* 💬 แก้ไขกล่องข้อความแจ้งเตือน (Toast) ให้อ่านเห็นตัวหนังสือชัดเจน */
+    [data-testid="stToast"] {
+        background-color: #131b2e !important;
+        border: 1px solid #3b82f6 !important;
+        color: #ffffff !important;
+    }
+    [data-testid="stToast"] p, [data-testid="stToast"] div {
+        color: #ffffff !important;
+    }
+
+    /* 📱 ควบคุมการจัดเรียงคอลัมน์ฮีโร่ฮิตให้ชิดกันสวยงามในมือถือ */
     @media (max-width: 768px) {
         [data-testid="stHorizontalBlock"] {
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: 4px !important;
-            justify-content: center !important;
+            gap: 6px !important;
         }
         [data-testid="column"] {
-            width: 31% !important;
-            min-width: 31% !important;
-            flex: 1 1 31% !important;
-            padding: 0 !important;
-        }
-        div.stButton > button {
-            padding: 5px !important;
-        }
-        div.stButton > button p {
-            font-size: 11px !important; /* ย่อตัวหนังสือบนมือถือนิดนึงให้ไม่ตกบรรทัด */
+            flex: 1 1 0% !important;
+            min-width: 0px !important;
+            padding: 0 2px !important;
         }
     }
     </style>
@@ -1272,7 +1271,7 @@ db, thai_to_eng = parse_database(rawData)
 if "search_query" not in st.session_state:
   st.session_state.search_query = ""
 if "recent_searches" not in st.session_state:
-  st.session_state.recent_searches = ["มิยะ", "กอร์ด", "ราฟาเอล", "ฟาร์ซ่า", "โนแลน", "อลิซ"]
+  st.session_state.recent_searches = ["ราฟาเอล", "โนแลน", "กอร์ด", "ฟาร์ซ่า", "อลิซ", "มิยะ"]
 
 # ฟังก์ชัน Callback เมื่อกดปุ่มฮีโร่ เพื่อจัดการข้อความก่อนรีโหลดหน้า
 def append_to_query(hero_name):
@@ -1305,9 +1304,9 @@ with st.sidebar:
 st.title("🎮 Pk MLBB Draft Hero 🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
-# ⭐ จัดเรียงฮีโร่ที่ค้นหาบ่อยในกล่อง Container
+# ⭐ กล่องฮีโร่ฮิต จัดวางชิดกันแบบแคปซูล 3 คอลัมน์ ไม่ล้นจอ
 with st.container(border=True):
-    st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 16px; margin-bottom: 10px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 15px; margin-bottom: 8px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
     
     recent = st.session_state.recent_searches
     for i in range(0, len(recent), 3):
@@ -1318,7 +1317,7 @@ with st.container(border=True):
                     hero_name = recent[i + j]
                     st.button(f"⭐ {hero_name}", key=f"chip_{i+j}", on_click=append_to_query, args=(hero_name,))
 
-st.write("") # เว้นระยะนิดนึงก่อนถึงช่องค้นหา
+st.write("") 
 
 # ตัวแปรช่องค้นหาเชื่อมกับ session_state โดยตรง
 user_input = st.text_input(
@@ -1477,11 +1476,10 @@ if st.button("🔍 ค้นหาตัวแก้ทาง", type="primary"):
                 st.caption(f"💡 เหตุผล: {reasons_str} | {score_label}: {score}")
                 st.divider()
 
-
-st.markdown("---") # เส้นคั่นก่อนส่วนของ Tier List ด้านล่าง
+st.markdown("---")
 
 # ---------------------------------------------------------
-# 6. ส่วนแสดง Tier List (ย้ายมาไว้ด้านล่างตามที่ขอ)
+# 6. ส่วนแสดง Tier List ด้านล่างสุด
 # ---------------------------------------------------------
 if "show_lobby_tier" not in st.session_state:
   st.session_state.show_lobby_tier = False
