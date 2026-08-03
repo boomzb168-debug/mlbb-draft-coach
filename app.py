@@ -14,7 +14,6 @@ st.markdown(
         background-color: #0b0f19;
         color: #f8fafc;
     }
-    /* ปรับแต่งสีข้อความทั่วไปให้อ่านง่าย */
     p, span, label {
         color: #f8fafc !important;
     }
@@ -1209,10 +1208,45 @@ def analyze_counters(enemy_team_input, database, thai_to_eng):
 # ---------------------------------------------------------
 db, thai_to_eng = parse_database(rawData)
 
+# จัดการ Session State สำหรับเก็บคำค้นหาปัจจุบัน
+if "query_input" not in st.session_state:
+  st.session_state.query_input = ""
+
 user_input = st.text_input(
     "🔍 พิมพ์ชื่อตัวละครฝั่งตรงข้าม (ใช้เครื่องหมาย , คั่นระหว่างชื่อ):",
+    key="query_input",
     placeholder="เช่น: ลีโอมอร์ด, ฆโฎตกัจ, เอสเตส, ลาปู-ลาปู",
 )
+
+# ระบบ Autocomplete กรองรายชื่อฮีโร่ตามตัวอักษรที่กำลังพิมพ์คำสุดท้าย
+if user_input:
+  parts = [p.strip() for p in user_input.split(",")]
+  current_term = parts[-1] if parts else ""
+
+  if current_term:
+    all_heroes = list(thai_to_eng.keys())
+    # ค้นหาฮีโร่ที่มีตัวอักษรตรงกับคำที่กำลังพิมพ์
+    matched_suggestions = [
+        h for h in all_heroes if current_term.lower() in h.lower()
+    ]
+
+    if matched_suggestions and current_term not in matched_suggestions:
+      st.caption("💡 แนะนำฮีโร่ที่ตรงกับคำค้นหา:")
+      cols = st.mini_cols if hasattr(st, "mini_cols") else st.columns(min(len(matched_suggestions[:5]), 5))
+      
+      # แสดงปุ่มกดเลือกชื่อฮีโร่อัตโนมัติ
+      suggestion_container = st.container()
+      with suggestion_container:
+        st.markdown(
+            " ".join(
+                [
+                    f"`{h}`"
+                    for h in matched_suggestions[
+                        :8
+                    ]  # แสดงตัวอย่างสูงสุด 8 ตัว
+                ]
+            )
+        )
 
 if user_input:
   enemy_team = [h.strip() for h in user_input.split(",") if h.strip()]
@@ -1258,7 +1292,6 @@ if user_input:
 
             if hero_name in heroAbilities:
               ability_desc = heroAbilities[hero_name]
-              # ใช้ HTML กำหนดสีตัวหนังสือให้อ่านง่ายขึ้นบนพื้นหลังมืด
               st.markdown(
                   f"""
                             <div style="background-color: #1e293b; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 0 8px 8px 0; color: #93c5fd; margin-top: 10px; font-size: 14px; line-height: 1.5;">
