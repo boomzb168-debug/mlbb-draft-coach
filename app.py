@@ -30,13 +30,13 @@ st.markdown(
         color: var(--text-main) !important;
     }
     
-    /* 🎨 ตกแต่งปุ่มฮีโร่ฮิตทรงแคปซูล จัดระยะชิดพอดีไม่ล้นจอ */
+    /* 🎨 ตกแต่งปุ่มฮีโร่ฮิตทรงแคปซูล */
     div.stButton > button {
         background-color: #1a263d !important; 
         color: #ffffff !important; 
         border: 1px solid #3b82f6 !important; 
         border-radius: 30px !important;
-        padding: 4px 8px !important;
+        padding: 4px 6px !important;
         width: 100% !important; 
     }
     div.stButton > button p {
@@ -95,16 +95,17 @@ st.markdown(
         color: #ffffff !important;
     }
 
-    /* 📱 ควบคุมการจัดเรียงคอลัมน์ฮีโร่ฮิตให้ชิดกันสวยงามในมือถือ */
-    @media (max-width: 768px) {
-        [data-testid="stHorizontalBlock"] {
-            gap: 6px !important;
-        }
-        [data-testid="column"] {
-            flex: 1 1 0% !important;
-            min-width: 0px !important;
-            padding: 0 2px !important;
-        }
+    /* 📱 บังคับให้แถวฮีโร่ฮิตเรียงเป็นแนวนอน 3 คอลัมน์ชิดกันตลอดเวลาทุกหน้าจอ */
+    [data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+    }
+    [data-testid="column"] {
+        flex: 1 1 33.33% !important;
+        min-width: 0px !important;
+        padding: 0 !important;
     }
     </style>
     """,
@@ -1304,7 +1305,7 @@ with st.sidebar:
 st.title("🎮 Pk MLBB Draft Hero 🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
-# ⭐ กล่องฮีโร่ฮิต จัดวางชิดกันแบบแคปซูล 3 คอลัมน์ ไม่ล้นจอ
+# ⭐ กล่องฮีโร่ฮิต จัดวางเป็นแนวนอน 3 คอลัมน์ชิดกันพอดีตามภาพตัวอย่าง
 with st.container(border=True):
     st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 15px; margin-bottom: 8px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
     
