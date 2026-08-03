@@ -1272,9 +1272,10 @@ db, thai_to_eng = parse_database(rawData)
 if "search_query" not in st.session_state:
   st.session_state.search_query = ""
 if "recent_searches" not in st.session_state:
-  st.session_state.recent_searches = ["ราฟาเอล", "โนแลน", "กอร์ด", "ฟาร์ซ่า", "อลิซ", "มิยะ"]
+  # ตั้งค่าเริ่มต้นจำกัดไว้ที่ 3 ตัวตามต้องการ
+  st.session_state.recent_searches = ["ราฟาเอล", "โนแลน", "กอร์ด"]
 
-# ฟังก์ชัน Callback เมื่อกดปุ่มฮีโร่ เพื่อจัดการข้อความก่อนรีโหลดหน้า
+# ฟังก์ชัน Callback เมื่อกดปุ่มฮีโร่
 def append_to_query(hero_name):
   val = st.session_state.search_query.strip()
   if val and not val.endswith(","):
@@ -1289,6 +1290,10 @@ def autocomplete_query(th_n):
   if parts:
       parts[-1] = th_n
   st.session_state.search_query = ", ".join(parts) + ", "
+
+# ฟังก์ชันสำหรับล้างข้อความค้นหาในคลิกเดียว
+def clear_query():
+  st.session_state.search_query = ""
 
 # ---------------------------------------------------------
 # 4. ส่วน Sidebar และหน้าหลักด้านบน
@@ -1305,26 +1310,31 @@ with st.sidebar:
 st.title("🎮 Pk MLBB Draft Hero 🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
-# ⭐ กล่องฮีโร่ฮิต จัดเรียงด้วย Pure CSS Grid/Flex ป้องกันล้นจอ
+# ⭐ กล่องฮีโร่ฮิต ปรับเหลือเพียง 3 ช่อง (3 ปุ่มฮิตล่าสุด)
 with st.container(border=True):
     st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 15px; margin-bottom: 4px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
     
-    recent = st.session_state.recent_searches
+    recent = st.session_state.recent_searches[:3]
     st.markdown('<div class="recent-grid">', unsafe_allow_html=True)
     for idx, hero_name in enumerate(recent):
-        # ใช้ container เปล่าๆ ครอบปุ่มเพื่อให้ CSS ควบคุมการจัดวางได้สมบูรณ์
         with st.container():
             st.button(f"⭐ {hero_name}", key=f"chip_{idx}", on_click=append_to_query, args=(hero_name,))
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.write("") 
 
-# ตัวแปรช่องค้นหาเชื่อมกับ session_state โดยตรง
-user_input = st.text_input(
-    "🔍 พิมพ์ชื่อตัวละคร (ใช้ , คั่น) เช่น: ลีโอมอร์ด, เอสเตส",
-    key="search_query",
-    placeholder="พิมพ์ชื่อฮีโร่ที่นี่...",
-)
+# จัดวางช่องพิมพ์ค้นหาและปุ่มล้างข้อความในแถวเดียวกัน
+col_input, col_clear = st.columns([4, 1])
+with col_input:
+  user_input = st.text_input(
+      "🔍 พิมพ์ชื่อตัวละคร (ใช้ , คั่น) เช่น: ลีโอมอร์ด, เอสเตส",
+      key="search_query",
+      placeholder="พิมพ์ชื่อฮีโร่ที่นี่...",
+      label_visibility="collapsed"
+  )
+with col_clear:
+  st.write("") # ดันปุ่มลงมาให้ตรงกับช่องกรอกข้อมูล
+  st.button("🗑️ ล้าง", on_click=clear_query, use_container_width=True)
 
 # ระบบ Autocomplete (ช่องแนะนำคำ)
 if user_input.strip():
@@ -1404,8 +1414,8 @@ if st.button("🔍 ค้นหาตัวแก้ทาง", type="primary"):
       for cn in corrected_names:
         if cn not in st.session_state.recent_searches:
           st.session_state.recent_searches.insert(0, cn)
-      if len(st.session_state.recent_searches) > 6:
-        st.session_state.recent_searches = st.session_state.recent_searches[:6]
+      if len(st.session_state.recent_searches) > 3:
+        st.session_state.recent_searches = st.session_state.recent_searches[:3]
 
       enemy_set = set(processed_enemies)
       lanes = ["Roam", "Gold Lane", "Jungle", "Exp Lane", "Mid Lane"]
