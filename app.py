@@ -30,14 +30,14 @@ st.markdown(
         color: var(--text-main) !important;
     }
     
-    /* 🎨 ตกแต่งปุ่มฮีโร่และปุ่มคำแนะนำให้อ่านง่ายและเป็นระเบียบ */
+    /* 🎨 ตกแต่งปุ่มฮีโร่และปุ่มคำแนะนำให้อ่านง่ายและเป็นระเบียบคล้ายแคปซูล */
     div.stButton > button {
-        background-color: #1a263d !important; /* พื้นหลังปุ่มสีน้ำเงินเข้ม */
-        color: #ffffff !important; /* ตัวอักษรสีขาว */
-        border: 1px solid #3b82f6 !important; /* ขอบปุ่มสีฟ้า */
-        border-radius: 12px !important;
-        padding: 5px 15px !important;
-        width: 100% !important; /* ให้ปุ่มเต็มกล่องคอลัมน์ */
+        background-color: #1a263d !important; 
+        color: #ffffff !important; 
+        border: 1px solid #3b82f6 !important; 
+        border-radius: 30px !important; /* ปรับเป็น 30px ให้เป็นทรงแคปซูล */
+        padding: 5px 10px !important;
+        width: 100% !important; 
     }
     div.stButton > button p {
         color: #ffffff !important;
@@ -54,7 +54,7 @@ st.markdown(
         background-color: #ff3b3b !important;
         color: #ffffff !important;
         border: none !important;
-        border-radius: 10px !important;
+        border-radius: 12px !important;
         box-shadow: 0 4px 15px rgba(255, 59, 59, 0.4) !important;
     }
     div.stButton > button[kind="primary"] p {
@@ -76,6 +76,29 @@ st.markdown(
     .stTextInput input:focus {
         border-color: var(--primary-color) !important;
         box-shadow: 0 0 8px rgba(255, 59, 59, 0.4) !important;
+    }
+    /* แก้ไขสีตัวหนังสือ Placeholder ให้อ่านง่ายขึ้น (สว่างขึ้น) */
+    .stTextInput input::placeholder {
+        color: #cbd5e1 !important; 
+        opacity: 1 !important;
+    }
+
+    /* 📱 ควบคุมการจัดเรียงคอลัมน์ในมือถือให้เป็น Grid แนวนอน */
+    @media (max-width: 768px) {
+        [data-testid="stHorizontalBlock"] {
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 5px !important;
+        }
+        [data-testid="column"] {
+            width: 33.33% !important;
+            min-width: 30% !important;
+            flex: 1 1 30% !important;
+            padding: 0 !important;
+        }
+        div.stButton > button p {
+            font-size: 12px !important; /* ปรับฟอนต์ปุ่มในมือถือให้เล็กลงนิดนึงกันข้อความตกบรรทัด */
+        }
     }
     </style>
     """,
@@ -1242,7 +1265,7 @@ db, thai_to_eng = parse_database(rawData)
 if "search_query" not in st.session_state:
   st.session_state.search_query = ""
 if "recent_searches" not in st.session_state:
-  st.session_state.recent_searches = ["เบียร์ทริก", "โบร์ดี้", "คลอดด์", "หวานหว่าน", "แฟนนี่", "ฮายาบุซะ"]
+  st.session_state.recent_searches = ["ราฟาเอล", "โนแลน", "กอร์ด", "ฟาร์ซ่า", "อลิซ", "เอสเตส"]
 
 # ฟังก์ชัน Callback เมื่อกดปุ่มฮีโร่ เพื่อจัดการข้อความก่อนรีโหลดหน้า
 def append_to_query(hero_name):
@@ -1297,13 +1320,21 @@ if st.session_state.show_lobby_tier or show_tier_sidebar:
         st.info(f"📝 **ความสามารถเด่น:** {heroAbilities[hero['name']]}")
       st.divider()
 
-st.markdown("##### ⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:")
-# จัดเรียงปุ่มฮีโร่ค้นหาบ่อยให้เรียง 3 คอลัมน์ เป็นระเบียบขึ้น
-cols_chip = st.columns(3)
-for i, hero_name in enumerate(st.session_state.recent_searches):
-  with cols_chip[i % 3]:
-    # ใช้งาน Callback เพื่อเลี่ยงปัญหา Widget Modification
-    st.button(f"⭐ {hero_name}", key=f"chip_{i}", on_click=append_to_query, args=(hero_name,))
+# ⭐ จัดเรียงฮีโร่ที่ค้นหาบ่อยในกล่อง Container (ให้เหมือนในภาพ 1000008459)
+with st.container(border=True):
+    st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 16px; margin-bottom: 10px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
+    
+    # แบ่ง 3 คอลัมน์ ทีละแถว เพื่อให้คอลัมน์ไม่กองรวมกันในมือถือ
+    recent = st.session_state.recent_searches
+    for i in range(0, len(recent), 3):
+        cols = st.columns(3)
+        for j in range(3):
+            if i + j < len(recent):
+                with cols[j]:
+                    hero_name = recent[i + j]
+                    st.button(f"⭐ {hero_name}", key=f"chip_{i+j}", on_click=append_to_query, args=(hero_name,))
+
+st.write("") # เว้นระยะนิดนึงก่อนถึงช่องค้นหา
 
 # ตัวแปรช่องค้นหาเชื่อมกับ session_state โดยตรง
 user_input = st.text_input(
@@ -1327,11 +1358,14 @@ if user_input.strip():
         
     if matches:
       st.caption("💡 คำแนะนำฮีโร่ใกล้เคียง:")
-      sug_cols = st.columns(3)
-      for idx, (th_n, eng_n) in enumerate(matches[:6]):
-        with sug_cols[idx % 3]:
-            # Callback เมื่อกดปุ่มแนะนำคำ
-            st.button(f"✨ {th_n}", key=f"sug_{th_n}_{idx}", on_click=autocomplete_query, args=(th_n,))
+      # แสดงคำแนะนำแบ่งทีละ 3 รายการต่อแถวแบบเดียวกัน
+      for i in range(0, min(len(matches), 6), 3):
+          sug_cols = st.columns(3)
+          for j in range(3):
+              if i + j < min(len(matches), 6):
+                  with sug_cols[j]:
+                      th_n, eng_n = matches[i + j]
+                      st.button(f"✨ {th_n}", key=f"sug_{th_n}_{i+j}", on_click=autocomplete_query, args=(th_n,))
 
 # ---------------------------------------------------------
 # 5. ระบบประมวลผลผลลัพธ์
