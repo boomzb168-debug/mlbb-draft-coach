@@ -35,7 +35,7 @@ st.markdown(
         background-color: #1a263d !important; 
         color: #ffffff !important; 
         border: 1px solid #3b82f6 !important; 
-        border-radius: 30px !important; /* ปรับเป็น 30px ให้เป็นทรงแคปซูล */
+        border-radius: 30px !important;
         padding: 5px 10px !important;
         width: 100% !important; 
     }
@@ -43,6 +43,9 @@ st.markdown(
         color: #ffffff !important;
         font-size: 14px !important;
         margin: 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
     div.stButton > button:hover {
         background-color: #3b82f6 !important;
@@ -77,27 +80,31 @@ st.markdown(
         border-color: var(--primary-color) !important;
         box-shadow: 0 0 8px rgba(255, 59, 59, 0.4) !important;
     }
-    /* แก้ไขสีตัวหนังสือ Placeholder ให้อ่านง่ายขึ้น (สว่างขึ้น) */
+    /* แก้ไขสีตัวหนังสือ Placeholder ให้อ่านง่ายขึ้น */
     .stTextInput input::placeholder {
         color: #cbd5e1 !important; 
         opacity: 1 !important;
     }
 
-    /* 📱 ควบคุมการจัดเรียงคอลัมน์ในมือถือให้เป็น Grid แนวนอน */
+    /* 📱 ควบคุมการจัดเรียงคอลัมน์ในมือถือ ป้องกันปุ่มตกขอบจอ */
     @media (max-width: 768px) {
         [data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            gap: 5px !important;
+            flex-wrap: wrap !important;
+            gap: 4px !important;
+            justify-content: center !important;
         }
         [data-testid="column"] {
-            width: 33.33% !important;
-            min-width: 30% !important;
-            flex: 1 1 30% !important;
+            width: 31% !important;
+            min-width: 31% !important;
+            flex: 1 1 31% !important;
             padding: 0 !important;
         }
+        div.stButton > button {
+            padding: 5px !important;
+        }
         div.stButton > button p {
-            font-size: 12px !important; /* ปรับฟอนต์ปุ่มในมือถือให้เล็กลงนิดนึงกันข้อความตกบรรทัด */
+            font-size: 11px !important; /* ย่อตัวหนังสือบนมือถือนิดนึงให้ไม่ตกบรรทัด */
         }
     }
     </style>
@@ -1265,7 +1272,7 @@ db, thai_to_eng = parse_database(rawData)
 if "search_query" not in st.session_state:
   st.session_state.search_query = ""
 if "recent_searches" not in st.session_state:
-  st.session_state.recent_searches = ["ราฟาเอล", "โนแลน", "กอร์ด", "ฟาร์ซ่า", "อลิซ", "เอสเตส"]
+  st.session_state.recent_searches = ["มิยะ", "กอร์ด", "ราฟาเอล", "ฟาร์ซ่า", "โนแลน", "อลิซ"]
 
 # ฟังก์ชัน Callback เมื่อกดปุ่มฮีโร่ เพื่อจัดการข้อความก่อนรีโหลดหน้า
 def append_to_query(hero_name):
@@ -1284,7 +1291,7 @@ def autocomplete_query(th_n):
   st.session_state.search_query = ", ".join(parts) + ", "
 
 # ---------------------------------------------------------
-# 4. ส่วน Sidebar และแสดงผลหน้าหลัก Streamlit
+# 4. ส่วน Sidebar และหน้าหลักด้านบน
 # ---------------------------------------------------------
 with st.sidebar:
   st.subheader("📌 เมนู")
@@ -1298,33 +1305,10 @@ with st.sidebar:
 st.title("🎮 Pk MLBB Draft Hero 🕹️")
 st.caption("ระบบช่วยดราฟตัวละครแก้ทาง Mobile Legends: Bang Bang")
 
-if "show_lobby_tier" not in st.session_state:
-  st.session_state.show_lobby_tier = False
-
-if st.button(
-    "🔥 ซ่อน/เปิดดู Tier List ฮีโร่ฮิตตอนนี้"
-    if st.session_state.show_lobby_tier
-    else "🔥 เปิดดู Tier List ฮีโร่ฮิตตอนนี้"
-):
-  st.session_state.show_lobby_tier = not st.session_state.show_lobby_tier
-  st.rerun()
-
-if st.session_state.show_lobby_tier or show_tier_sidebar:
-  st.markdown("### 🔥 Tier List ฮีโร่ฮิต")
-  for idx, hero in enumerate(popularTierList):
-    rank = idx + 1
-    with st.container():
-      st.markdown(f"**🔥 อันดับที่ {rank}. {hero['name']} ({hero['th_name']})**")
-      st.write(f"🎯 **บทบาท:** {hero['role']} | 📍 **เลนยอดนิยม:** {hero['lane']}")
-      if hero["name"] in heroAbilities:
-        st.info(f"📝 **ความสามารถเด่น:** {heroAbilities[hero['name']]}")
-      st.divider()
-
-# ⭐ จัดเรียงฮีโร่ที่ค้นหาบ่อยในกล่อง Container (ให้เหมือนในภาพ 1000008459)
+# ⭐ จัดเรียงฮีโร่ที่ค้นหาบ่อยในกล่อง Container
 with st.container(border=True):
     st.markdown("<div style='text-align: center; color: white; font-weight: bold; font-size: 16px; margin-bottom: 10px;'>⭐ ฮีโร่ฮิตที่ค้นหาบ่อย:</div>", unsafe_allow_html=True)
     
-    # แบ่ง 3 คอลัมน์ ทีละแถว เพื่อให้คอลัมน์ไม่กองรวมกันในมือถือ
     recent = st.session_state.recent_searches
     for i in range(0, len(recent), 3):
         cols = st.columns(3)
@@ -1358,7 +1342,6 @@ if user_input.strip():
         
     if matches:
       st.caption("💡 คำแนะนำฮีโร่ใกล้เคียง:")
-      # แสดงคำแนะนำแบ่งทีละ 3 รายการต่อแถวแบบเดียวกัน
       for i in range(0, min(len(matches), 6), 3):
           sug_cols = st.columns(3)
           for j in range(3):
@@ -1417,7 +1400,6 @@ if st.button("🔍 ค้นหาตัวแก้ทาง", type="primary"):
       processed_enemies.append(found_key)
       corrected_names.append(found_th)
 
-    # นำคำที่ปรับแก้แล้วเข้าไปในช่องค้นหาประวัติ
     if not has_unknown:
       st.success(f"ค้นหาตัวแก้ทางสำหรับฮีโร่: {', '.join(corrected_names)}")
       for cn in corrected_names:
@@ -1494,3 +1476,31 @@ if st.button("🔍 ค้นหาตัวแก้ทาง", type="primary"):
                 st.write(f"**{rank}. {hero_name} ({data['th_name']})**")
                 st.caption(f"💡 เหตุผล: {reasons_str} | {score_label}: {score}")
                 st.divider()
+
+
+st.markdown("---") # เส้นคั่นก่อนส่วนของ Tier List ด้านล่าง
+
+# ---------------------------------------------------------
+# 6. ส่วนแสดง Tier List (ย้ายมาไว้ด้านล่างตามที่ขอ)
+# ---------------------------------------------------------
+if "show_lobby_tier" not in st.session_state:
+  st.session_state.show_lobby_tier = False
+
+if st.button(
+    "🔥 ซ่อน Tier List ฮีโร่ฮิตตอนนี้"
+    if st.session_state.show_lobby_tier
+    else "🔥 เปิดดู Tier List ฮีโร่ฮิตตอนนี้"
+):
+  st.session_state.show_lobby_tier = not st.session_state.show_lobby_tier
+  st.rerun()
+
+if st.session_state.show_lobby_tier or show_tier_sidebar:
+  st.markdown("### 🔥 Tier List ฮีโร่ฮิต")
+  for idx, hero in enumerate(popularTierList):
+    rank = idx + 1
+    with st.container():
+      st.markdown(f"**🔥 อันดับที่ {rank}. {hero['name']} ({hero['th_name']})**")
+      st.write(f"🎯 **บทบาท:** {hero['role']} | 📍 **เลนยอดนิยม:** {hero['lane']}")
+      if hero["name"] in heroAbilities:
+        st.info(f"📝 **ความสามารถเด่น:** {heroAbilities[hero['name']]}")
+      st.divider()
